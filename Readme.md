@@ -1,7 +1,7 @@
 # Личный проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
 * Студент: [Вадим Зуев](https://up.htmlacademy.ru/ecmascript/12/user/1487995).
-* Наставник: `Неизвестно`.
+* Наставник: [Артем Приходько](https://htmlacademy.ru/profile/id1012525).
 
 ---
 
