@@ -94,7 +94,7 @@ const createEditFormTemplate = () => {
               <div class="event__type-wrapper">
                 <label class="event__type  event__type-btn" for="event-type-toggle-1">
                   <span class="visually-hidden">Choose event type</span>
-                  <img class="event__type-icon" width="17" height="17" src="../markup/img/icons/flight.png" alt="Event type icon">
+                  <img class="event__type-icon" width="17" height="17" src="./img/icons/flight.png" alt="Event type icon">
                 </label>
                 <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -253,11 +253,11 @@ const createEditFormTemplate = () => {
 
                 <div class="event__photos-container">
                   <div class="event__photos-tape">
-                    <img class="event__photo" src="../markup/img/photos/1.jpg" alt="Event photo">
-                    <img class="event__photo" src="../markup/img/photos/2.jpg" alt="Event photo">
-                    <img class="event__photo" src="../markup/img/photos/3.jpg" alt="Event photo">
-                    <img class="event__photo" src="../markup/img/photos/4.jpg" alt="Event photo">
-                    <img class="event__photo" src="../markup/img/photos/5.jpg" alt="Event photo">
+                    <img class="event__photo" src="./img/photos/1.jpg" alt="Event photo">
+                    <img class="event__photo" src="./img/photos/2.jpg" alt="Event photo">
+                    <img class="event__photo" src="./img/photos/3.jpg" alt="Event photo">
+                    <img class="event__photo" src="./img/photos/4.jpg" alt="Event photo">
+                    <img class="event__photo" src="./img/photos/5.jpg" alt="Event photo">
                   </div>
                 </div>
               </section>
@@ -300,7 +300,7 @@ const createTripItem1Template = () => {
     `<li class="trip-events__item">
                   <div class="event">
                     <div class="event__type">
-                      <img class="event__type-icon" width="42" height="42" src="../markup/img/icons/taxi.png" alt="Event type icon">
+                      <img class="event__type-icon" width="42" height="42" src="./img/icons/taxi.png" alt="Event type icon">
                     </div>
                     <h3 class="event__title">Taxi to Amsterdam</h3>
 
@@ -340,7 +340,7 @@ const createTripItem2Template = () => {
     `<li class="trip-events__item">
                   <div class="event">
                     <div class="event__type">
-                      <img class="event__type-icon" width="42" height="42" src="../markup/img/icons/flight.png" alt="Event type icon">
+                      <img class="event__type-icon" width="42" height="42" src="./img/icons/flight.png" alt="Event type icon">
                     </div>
                     <h3 class="event__title">Flight to Chamonix</h3>
 
@@ -385,7 +385,7 @@ const createTripItem3Template = () => {
     `<li class="trip-events__item">
                   <div class="event">
                     <div class="event__type">
-                      <img class="event__type-icon" width="42" height="42" src="../markup/img/icons/drive.png" alt="Event type icon">
+                      <img class="event__type-icon" width="42" height="42" src="./img/icons/drive.png" alt="Event type icon">
                     </div>
                     <h3 class="event__title">Drive to Chamonix</h3>
 
