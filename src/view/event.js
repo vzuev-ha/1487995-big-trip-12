@@ -1,4 +1,4 @@
-export const createTripItem1Template = () => {
+export const createEvent1Template = () => {
   return (
     `<li class="trip-events__item">
                   <div class="event">
@@ -38,7 +38,7 @@ export const createTripItem1Template = () => {
 };
 
 
-export const createTripItem2Template = () => {
+export const createEvent2Template = () => {
   return (
     `<li class="trip-events__item">
                   <div class="event">
@@ -83,7 +83,7 @@ export const createTripItem2Template = () => {
 };
 
 
-export const createTripItem3Template = () => {
+export const createEvent3Template = () => {
   return (
     `<li class="trip-events__item">
                   <div class="event">

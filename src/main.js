@@ -4,13 +4,13 @@ import {createMenuTemplate} from "./view/site-menu.js";
 import {createSortTemplate} from "./view/sort.js";
 import {createEditFormTemplate} from "./view/edit-form.js";
 
-import {createEventsContainerTemplate} from "./view/events-container.js";
+import {createRouteContainerTemplate} from "./view/route-container.js";
 import {createDayTemplate} from "./view/day.js";
 import {createDayEventsContainerTemplate} from "./view/day-events-container.js";
 
-import {createTripItem1Template} from "./view/trip-items.js";
-import {createTripItem2Template} from "./view/trip-items.js";
-import {createTripItem3Template} from "./view/trip-items.js";
+import {createEvent1Template} from "./view/event.js";
+import {createEvent2Template} from "./view/event.js";
+import {createEvent3Template} from "./view/event.js";
 
 
 const render = (container, template, place) => {
@@ -32,29 +32,29 @@ render(headerTripControls[0], createMenuTemplate(), `afterend`);
 render(headerTripControls[1], createFiltersTemplate(), `afterend`);
 
 
-const mainTripContainerElement = document.querySelector(`.trip-events`);
+const mainContainerElement = document.querySelector(`.trip-events`);
 
 // Сортировка
-render(mainTripContainerElement, createSortTemplate(), `beforeend`);
+render(mainContainerElement, createSortTemplate(), `beforeend`);
 
 // Форма редактирования
-render(mainTripContainerElement, createEditFormTemplate(), `beforeend`);
+render(mainContainerElement, createEditFormTemplate(), `beforeend`);
 
 
 // Контейнер точек маршрута
-render(mainTripContainerElement, createEventsContainerTemplate(), `beforeend`);
+render(mainContainerElement, createRouteContainerTemplate(), `beforeend`);
 
 // Точки
 // День
-const mainEventsContainerElement = mainTripContainerElement.querySelector(`.trip-days`);
-render(mainEventsContainerElement, createDayTemplate(), `beforeend`);
+const routeContainerElement = mainContainerElement.querySelector(`.trip-days`);
+render(routeContainerElement, createDayTemplate(), `beforeend`);
 
 // Контейнер точек дня
-const mainDayElement = mainEventsContainerElement.querySelector(`.trip-days__item`);
-render(mainDayElement, createDayEventsContainerTemplate(), `beforeend`);
+const dayElement = routeContainerElement.querySelector(`.trip-days__item`);
+render(dayElement, createDayEventsContainerTemplate(), `beforeend`);
 
 // Точки дня
-const mainDayEventsContainerElement = mainDayElement.querySelector(`.trip-events__list`);
-render(mainDayEventsContainerElement, createTripItem1Template(), `beforeend`);
-render(mainDayEventsContainerElement, createTripItem2Template(), `beforeend`);
-render(mainDayEventsContainerElement, createTripItem3Template(), `beforeend`);
+const dayEventsContainerElement = dayElement.querySelector(`.trip-events__list`);
+render(dayEventsContainerElement, createEvent1Template(), `beforeend`);
+render(dayEventsContainerElement, createEvent2Template(), `beforeend`);
+render(dayEventsContainerElement, createEvent3Template(), `beforeend`);
