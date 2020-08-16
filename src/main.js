@@ -14,7 +14,10 @@ import {generateEvent} from "./mock/event.js";
 
 const EVENT_COUNT = 20;
 
-const routeEvents = new Array(EVENT_COUNT).fill().map(generateEvent);
+const routeEvents = new Array(EVENT_COUNT).fill().map(generateEvent)
+  .sort((a, b) => {
+    return a.startTime.getTime() - b.startTime.getTime();
+  });
 
 
 const render = (container, template, place) => {

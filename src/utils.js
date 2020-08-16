@@ -15,6 +15,10 @@ export const getDayAsString = (date) => {
   return date.toLocaleString(`en-US`, {day: `numeric`, month: `short`});
 }
 
+export const getDateISOFormat = (date) => {
+  return date.toISOString();
+}
+
 export const getTimeBetween = (startDate, endDate) => {
   const gap = endDate.getTime() - startDate.getTime();
 

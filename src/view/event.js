@@ -1,4 +1,4 @@
-import {getRandomInteger, getTimeAsString, getDayAsString, getTimeBetween} from "../utils";
+import {getRandomInteger, getTimeAsString, getDayAsString, getDateISOFormat, getTimeBetween} from "../utils";
 
 export const createEventTemplate = (routeEvent) => {
   const {eventType, destination, startTime, endTime, price, isFavorite} = routeEvent;
@@ -40,9 +40,9 @@ export const createEventTemplate = (routeEvent) => {
 
                     <div class="event__schedule">
                       <p class="event__time">
-                        <time class="event__start-time" datetime="2019-03-18T10:30">${getTimeAsString(startTime)}</time>
+                        <time class="event__start-time" datetime="${getDateISOFormat(startTime)}">${getTimeAsString(startTime)}</time>
                         &mdash;
-                        <time class="event__end-time" datetime="2019-03-18T11:00">${getTimeAsString(endTime)}</time>
+                        <time class="event__end-time" datetime="${getDateISOFormat(endTime)}">${getTimeAsString(endTime)}</time>
                       </p>
                       <p class="event__duration">${getTimeBetween(startTime, endTime)}</p>
                     </div>
