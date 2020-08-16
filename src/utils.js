@@ -29,6 +29,10 @@ export  const getDateSlashedFormat = (date) => {
   return `${y}/${m}/${d} ${h}:${min}`;
 }
 
+export const getDayMilliseconds = (date) => {
+  return Math.floor(date.getTime() / 1000 / 60 / 60 / 24);
+}
+
 export const getTimeBetween = (startDate, endDate) => {
   const gap = endDate.getTime() - startDate.getTime();
 

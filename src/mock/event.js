@@ -184,7 +184,7 @@ const generateDestination = () => {
 
 
 const generateStartTime = () => {
-  const maxDaysGap = 7;
+  const maxDaysGap = 3;
   const daysGap = getRandomInteger(-maxDaysGap, maxDaysGap);
   const startTime = new Date();
 
