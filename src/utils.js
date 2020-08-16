@@ -19,6 +19,16 @@ export const getDateISOFormat = (date) => {
   return date.toISOString();
 }
 
+export  const getDateSlashedFormat = (date) => {
+  const y = date.getFullYear().toString().slice(2).padStart(2, `0`);
+  const m = (date.getMonth() + 1).toString().padStart(2, `0`);
+  const d = date.toLocaleString(`en-US`, {day: `2-digit`});
+  const h = date.getHours().toString().padStart(2, `0`);
+  const min = date.getMinutes().toString().padStart(2, `0`);
+
+  return `${y}/${m}/${d} ${h}:${min}`;
+}
+
 export const getTimeBetween = (startDate, endDate) => {
   const gap = endDate.getTime() - startDate.getTime();
 
@@ -29,22 +39,13 @@ export const getTimeBetween = (startDate, endDate) => {
   let gapString = ``;
 
   if (d > 0) {
-    gapString += d > 9
-      ? d
-      : `0` + d;
-    gapString += `D `;
+    gapString += d.toString().padStart(2, `0`) + `D `;
   }
   if (h > 0) {
-    gapString += h > 9
-      ? h
-      : `0` + h;
-    gapString += `H `;
+    gapString += h.toString().padStart(2, `0`) + `H `;
   }
   if (m > 0) {
-    gapString += m > 9
-      ? m
-      : `0` + m;
-    gapString += `M`;
+    gapString += m.toString().padStart(2, `0`) + `M `;
   }
 
   return gapString;

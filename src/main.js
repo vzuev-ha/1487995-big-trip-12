@@ -45,7 +45,7 @@ const mainContainerElement = document.querySelector(`.trip-events`);
 render(mainContainerElement, createSortTemplate(), `beforeend`);
 
 // Форма редактирования
-render(mainContainerElement, createEditFormTemplate(), `beforeend`);
+render(mainContainerElement, createEditFormTemplate(routeEvents[0]), `beforeend`);
 
 
 // Контейнер точек маршрута
@@ -62,6 +62,8 @@ render(dayElement, createDayEventsContainerTemplate(), `beforeend`);
 
 // Точки дня
 const dayEventsContainerElement = dayElement.querySelector(`.trip-events__list`);
-for (let i = 0; i < EVENT_COUNT; i++) {
+for (let i = 1; i < EVENT_COUNT; i++) {
   render(dayEventsContainerElement, createEventTemplate(routeEvents[i]), `beforeend`);
 }
+
+

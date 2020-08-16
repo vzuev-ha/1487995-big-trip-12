@@ -6,7 +6,13 @@ const generateEventType = () => {
       name: `Taxi`,
       value: `taxi`,
       preposition: `to`,
-      offers: [`Order Uber`]
+      offers: [
+        {
+          shortName: `Order Uber`,
+          fullName: `Order Uber`,
+          value: `uber`
+        }
+      ]
     },
     {
       name: `Bus`,
@@ -18,7 +24,18 @@ const generateEventType = () => {
       name: `Train`,
       value: `train`,
       preposition: `to`,
-      offers: [`Switch to comfort`, `Add meal`]
+      offers: [
+        {
+          shortName: `Switch to comfort`,
+          fullName: `Switch to comfort class`,
+          value: `comfort`
+        },
+        {
+          shortName: `Add meal`,
+          fullName: `Add meal`,
+          value: `meal`
+        }
+      ]
     },
     {
       name: `Ship`,
@@ -36,20 +53,58 @@ const generateEventType = () => {
       name: `Drive`,
       value: `drive`,
       preposition: `to`,
-      offers: [`Rent a car`]
+      offers: [
+        {
+          shortName: `Rent a car`,
+          fullName: `Rent a car`,
+          value: `rent`
+        }
+      ]
     },
     {
       name: `Flight`,
       value: `flight`,
       preposition: `to`,
-      offers: [`Add luggage`, `Switch to comfort`, `Add meal`, `Choose seats`, `Travel by train`]
+      offers: [
+        {
+          shortName: `Add luggage`,
+          fullName: `Add luggage`,
+          value: `luggage`
+        },
+        {
+          shortName: `Switch to comfort`,
+          fullName: `Switch to comfort class`,
+          value: `comfort`
+        },
+        {
+          shortName: `Add meal`,
+          fullName: `Add meal`,
+          value: `meal`
+        },
+        {
+          shortName: `Choose seats`,
+          fullName: `Choose seats`,
+          value: `seats`
+        },
+        {
+          shortName: `Travel by train`,
+          fullName: `Travel by train`,
+          value: `train`
+        }
+      ]
     },
 
     {
       name: `Check-in`,
       value: `check-in`,
       preposition: `in`,
-      offers: [`Add breakfast `]
+      offers: [
+        {
+          shortName: `Add breakfast`,
+          fullName: `Add breakfast`,
+          value: `breakfast`
+        }
+      ]
     },
     {
       name: `Sightseeing`,
@@ -69,9 +124,9 @@ const generateEventType = () => {
 
   const {name, value, preposition, offers} = eventTypes[randomIndex];
 
-  const eventOffers = offers.map((offerName) => {
+  const eventOffers = offers.map((offer) => {
     return {
-      name: offerName,
+      offer,
       price: generatePrice(),
       isSelected: Boolean(getRandomInteger(0, 1))
     };
@@ -122,7 +177,8 @@ const generateDestination = () => {
     name: destinations[getRandomInteger(0, destinations.length - 1)],
     description,
     photos: Array(getRandomInteger(0, 6))
-      .fill(`http://picsum.photos/248/152?r=${Math.random()}`)
+      .fill()
+      .map(() => `http://picsum.photos/248/152?r=${Math.random()}`)
   };
 };
 

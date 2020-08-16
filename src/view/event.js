@@ -1,7 +1,7 @@
-import {getRandomInteger, getTimeAsString, getDayAsString, getDateISOFormat, getTimeBetween} from "../utils";
+import {getTimeAsString, getDateISOFormat, getTimeBetween} from "../utils.js";
 
 export const createEventTemplate = (routeEvent) => {
-  const {eventType, destination, startTime, endTime, price, isFavorite} = routeEvent;
+  const {eventType, destination, startTime, endTime, price} = routeEvent;
 
   const {
     name: eventName,
@@ -12,15 +12,17 @@ export const createEventTemplate = (routeEvent) => {
 
   const {name: destinationName} = destination;
 
-  let offersHTML = eventOffers.map(({name, price, isSelected}) => {
-      return isSelected
-        ? `                      <li class="event__offer">
-                        <span class="event__offer-title">${name}</span>
+  let offersHTML = eventOffers.map(({offer, price: offerPrice, isSelected}) => {
+    const {shortName: offerShortName} = offer;
+
+    return isSelected
+      ? `                      <li class="event__offer">
+                        <span class="event__offer-title">${offerShortName}</span>
                         &plus;
-                        &euro;&nbsp;<span class="event__offer-price">${price}</span>
+                        &euro;&nbsp;<span class="event__offer-price">${offerPrice}</span>
                        </li>`
-        : ``;
-    }
+      : ``;
+  }
   ).join(``);
 
   if (offersHTML.toString().length) {
