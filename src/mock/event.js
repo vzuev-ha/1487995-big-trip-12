@@ -42,7 +42,7 @@ const generateEventType = () => {
       name: `Flight`,
       value: `flight`,
       preposition: `to`,
-      offers: [`Add luggage`, `Switch to comfort class`, `Add meal`, `Choose seats`, `Travel by train`]
+      offers: [`Add luggage`, `Switch to comfort`, `Add meal`, `Choose seats`, `Travel by train`]
     },
 
     {

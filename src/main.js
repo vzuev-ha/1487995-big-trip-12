@@ -8,7 +8,13 @@ import {createRouteContainerTemplate} from "./view/route-container.js";
 import {createDayTemplate} from "./view/day.js";
 import {createDayEventsContainerTemplate} from "./view/day-events-container.js";
 
-import {createEvent1Template} from "./view/event.js";
+import {createEventTemplate} from "./view/event.js";
+import {generateEvent} from "./mock/event.js";
+
+
+const EVENT_COUNT = 20;
+
+const routeEvents = new Array(EVENT_COUNT).fill().map(generateEvent);
 
 
 const render = (container, template, place) => {
@@ -53,6 +59,6 @@ render(dayElement, createDayEventsContainerTemplate(), `beforeend`);
 
 // Точки дня
 const dayEventsContainerElement = dayElement.querySelector(`.trip-events__list`);
-render(dayEventsContainerElement, createEvent1Template(), `beforeend`);
-render(dayEventsContainerElement, createEvent1Template(), `beforeend`);
-render(dayEventsContainerElement, createEvent1Template(), `beforeend`);
+for (let i = 0; i < EVENT_COUNT; i++) {
+  render(dayEventsContainerElement, createEventTemplate(routeEvents[i]), `beforeend`);
+}
