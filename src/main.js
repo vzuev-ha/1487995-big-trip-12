@@ -9,8 +9,6 @@ import {createDayTemplate} from "./view/day.js";
 import {createDayEventsContainerTemplate} from "./view/day-events-container.js";
 
 import {createEvent1Template} from "./view/event.js";
-import {createEvent2Template} from "./view/event.js";
-import {createEvent3Template} from "./view/event.js";
 
 
 const render = (container, template, place) => {
@@ -56,5 +54,5 @@ render(dayElement, createDayEventsContainerTemplate(), `beforeend`);
 // Точки дня
 const dayEventsContainerElement = dayElement.querySelector(`.trip-events__list`);
 render(dayEventsContainerElement, createEvent1Template(), `beforeend`);
-render(dayEventsContainerElement, createEvent2Template(), `beforeend`);
-render(dayEventsContainerElement, createEvent3Template(), `beforeend`);
+render(dayEventsContainerElement, createEvent1Template(), `beforeend`);
+render(dayEventsContainerElement, createEvent1Template(), `beforeend`);
