@@ -1,11 +1,98 @@
-export const createEditFormTemplate = () => {
-  return (
-    `<form class="trip-events__item  event  event--edit" action="#" method="post">
+import {getDateSlashedFormat} from "../utils.js";
+
+
+export const createEditFormTemplate = (routeEvent) => {
+  const {eventType, destination, startTime, endTime, price} = routeEvent;
+
+  const {
+    name: eventName,
+    value: eventValue,
+    preposition: eventPreposition,
+    eventOffers
+  } = eventType;
+
+  const {name: destinationName, description, photos} = destination;
+
+
+  let offersHTML = eventOffers.map(({offer, price: offerPrice, isSelected}) => {
+    const {fullName: offerFullName, value: offerValue} = offer;
+
+    return `                  <div class="event__offer-selector">
+                    <input class="event__offer-checkbox  visually-hidden"
+                           id="event-offer-${offerValue}-1"
+                           type="checkbox"
+                           name="event-offer-${offerValue}"
+                           ${isSelected ? `checked` : ``}
+                    >
+                    <label class="event__offer-label" for="event-offer-${offerValue}-1">
+                      <span class="event__offer-title">${offerFullName}</span>
+                      &plus;
+                      &euro;&nbsp;<span class="event__offer-price">${offerPrice}</span>
+                    </label>
+                  </div>`;
+  }
+  ).join(``);
+
+  if (offersHTML.toString().length) {
+    offersHTML = `              <section class="event__section  event__section--offers">
+                <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+
+                <div class="event__available-offers">
+                ${offersHTML}
+                </div>
+              </section>`;
+  }
+
+
+  // Если есть фотографии - сгенерируем для них HTML
+  let photosHTML = photos.map((photoSrc) => {
+    return `                    <img class="event__photo" src="${photoSrc}" alt="Event photo">`;
+  }
+  ).join(``);
+
+  // Если хоть одна фотография была - можно генерировать обертку
+  if (photosHTML.toString().length) {
+    photosHTML = `                <div class="event__photos-container">
+                  <div class="event__photos-tape">
+                    ${photosHTML}
+                  </div>
+                </div>`;
+  }
+
+  let descriptionHTML = ``;
+  // Если есть текстовое описание - сгенерируем блок для него
+  if (description.toString().length) {
+    descriptionHTML = `                <p class="event__destination-description">${description}</p>`;
+  }
+
+  // Если есть описание или фотографии - выводим блок описания
+  if (descriptionHTML.toString().length || photosHTML.toString().length) {
+    descriptionHTML = `              <section class="event__section  event__section--destination">
+                <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+                ${descriptionHTML}
+
+                ${photosHTML}
+              </section>`;
+  }
+
+
+  // И, наконец, если есть блок с описанием или блок с допами - формируем конечный блок
+  let detailsHTML = ``;
+  if (descriptionHTML.toString().length || offersHTML.toString().length) {
+    detailsHTML = `            <section class="event__details">
+              ${offersHTML}
+
+              ${descriptionHTML}
+            </section>`;
+  }
+
+
+  return `<form class="trip-events__item  event  event--edit" action="#" method="post">
             <header class="event__header">
               <div class="event__type-wrapper">
                 <label class="event__type  event__type-btn" for="event-type-toggle-1">
                   <span class="visually-hidden">Choose event type</span>
-                  <img class="event__type-icon" width="17" height="17" src="./img/icons/flight.png" alt="Event type icon">
+                  <img class="event__type-icon" width="17" height="17" src="./img/icons/${eventValue}.png" alt="Event type icon">
                 </label>
                 <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -72,9 +159,9 @@ export const createEditFormTemplate = () => {
 
               <div class="event__field-group  event__field-group--destination">
                 <label class="event__label  event__type-output" for="event-destination-1">
-                  Flight to
+                  ${eventName} ${eventPreposition}
                 </label>
-                <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Geneva" list="destination-list-1">
+                <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationName}" list="destination-list-1">
                 <datalist id="destination-list-1">
                   <option value="Amsterdam"></option>
                   <option value="Geneva"></option>
@@ -87,12 +174,12 @@ export const createEditFormTemplate = () => {
                 <label class="visually-hidden" for="event-start-time-1">
                   From
                 </label>
-                <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="18/03/19 00:00">
+                <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getDateSlashedFormat(startTime)}">
                 &mdash;
                 <label class="visually-hidden" for="event-end-time-1">
                   To
                 </label>
-                <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="18/03/19 00:00">
+                <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getDateSlashedFormat(endTime)}">
               </div>
 
               <div class="event__field-group  event__field-group--price">
@@ -100,79 +187,13 @@ export const createEditFormTemplate = () => {
                   <span class="visually-hidden">Price</span>
                   &euro;
                 </label>
-                <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="">
+                <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
               </div>
 
               <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
               <button class="event__reset-btn" type="reset">Cancel</button>
             </header>
-            <section class="event__details">
-              <section class="event__section  event__section--offers">
-                <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
-                <div class="event__available-offers">
-                  <div class="event__offer-selector">
-                    <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
-                    <label class="event__offer-label" for="event-offer-luggage-1">
-                      <span class="event__offer-title">Add luggage</span>
-                      &plus;
-                      &euro;&nbsp;<span class="event__offer-price">30</span>
-                    </label>
-                  </div>
-
-                  <div class="event__offer-selector">
-                    <input class="event__offer-checkbox  visually-hidden" id="event-offer-comfort-1" type="checkbox" name="event-offer-comfort" checked>
-                    <label class="event__offer-label" for="event-offer-comfort-1">
-                      <span class="event__offer-title">Switch to comfort class</span>
-                      &plus;
-                      &euro;&nbsp;<span class="event__offer-price">100</span>
-                    </label>
-                  </div>
-
-                  <div class="event__offer-selector">
-                    <input class="event__offer-checkbox  visually-hidden" id="event-offer-meal-1" type="checkbox" name="event-offer-meal">
-                    <label class="event__offer-label" for="event-offer-meal-1">
-                      <span class="event__offer-title">Add meal</span>
-                      &plus;
-                      &euro;&nbsp;<span class="event__offer-price">15</span>
-                    </label>
-                  </div>
-
-                  <div class="event__offer-selector">
-                    <input class="event__offer-checkbox  visually-hidden" id="event-offer-seats-1" type="checkbox" name="event-offer-seats">
-                    <label class="event__offer-label" for="event-offer-seats-1">
-                      <span class="event__offer-title">Choose seats</span>
-                      &plus;
-                      &euro;&nbsp;<span class="event__offer-price">5</span>
-                    </label>
-                  </div>
-
-                  <div class="event__offer-selector">
-                    <input class="event__offer-checkbox  visually-hidden" id="event-offer-train-1" type="checkbox" name="event-offer-train">
-                    <label class="event__offer-label" for="event-offer-train-1">
-                      <span class="event__offer-title">Travel by train</span>
-                      &plus;
-                      &euro;&nbsp;<span class="event__offer-price">40</span>
-                    </label>
-                  </div>
-                </div>
-              </section>
-
-              <section class="event__section  event__section--destination">
-                <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-                <p class="event__destination-description">Geneva is a city in Switzerland that lies at the southern tip of expansive Lac Léman (Lake Geneva). Surrounded by the Alps and Jura mountains, the city has views of dramatic Mont Blanc.</p>
-
-                <div class="event__photos-container">
-                  <div class="event__photos-tape">
-                    <img class="event__photo" src="./img/photos/1.jpg" alt="Event photo">
-                    <img class="event__photo" src="./img/photos/2.jpg" alt="Event photo">
-                    <img class="event__photo" src="./img/photos/3.jpg" alt="Event photo">
-                    <img class="event__photo" src="./img/photos/4.jpg" alt="Event photo">
-                    <img class="event__photo" src="./img/photos/5.jpg" alt="Event photo">
-                  </div>
-                </div>
-              </section>
-            </section>
-          </form>`
-  );
+            ${detailsHTML}
+          </form>`;
 };
