@@ -58,16 +58,17 @@ const routeContainerElement = mainContainerElement.querySelector(`.trip-days`);
 
 // Наполняем событиями
 let dayIndex = 1;
-let previousDate = moment(`19800101`, `YYYYMMDD`).toDate();
+let previousMoment = moment(`19800101`, `YYYYMMDD`);
 
 let dayEventsContainerElement = null;
 
 for (let i = 1; i < EVENT_COUNT; i++) {
   const {startTime} = routeEvents[i];
+  const currentMoment = moment(startTime);
   // const currentDayMilliseconds = getDayMilliseconds(startTime);
 
   // Вставляем блок очередного дня
-  if (!moment(previousDate).isSame(moment(startTime), `day`)) {
+  if (!previousMoment.isSame(currentMoment, `day`)) {
     render(routeContainerElement, createDayTemplate(startTime, dayIndex), `beforeend`);
 
     // Контейнер точек дня
@@ -78,7 +79,7 @@ for (let i = 1; i < EVENT_COUNT; i++) {
     // Точки дня
     dayEventsContainerElement = dayElement.querySelector(`.trip-events__list`);
 
-    previousDate = new Date(startTime);
+    previousMoment = currentMoment;
     dayIndex++;
   }
 
