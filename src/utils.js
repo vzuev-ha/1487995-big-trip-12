@@ -1,3 +1,6 @@
+import moment from 'moment';
+
+
 // Функция из интернета по генерации случайного числа из диапазона
 // Источник - https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
 export const getRandomInteger = (a = 0, b = 1) => {
@@ -7,38 +10,31 @@ export const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-export const getTimeAsString = (date) => {
-  return date.toLocaleString(`en-US`, {hour12: false, hour: `2-digit`, minute: `2-digit`});
+export const getMomentTimeAsString = (inputMoment) => {
+  return moment(inputMoment).format(`HH:mm`);
 };
 
-export const getDayAsString = (date) => {
-  return date.toLocaleString(`en-US`, {day: `numeric`, month: `short`});
+export const getMomentMonthDayAsString = (inputMoment) => {
+  return moment(inputMoment).format(`MMM DD`);
 }
 
-export const getDateISOFormat = (date) => {
-  return date.toISOString();
+export const getMomentDayAsString = (inputMoment) => {
+  return moment(inputMoment).format(`DD`);
 }
 
-export  const getDateSlashedFormat = (date) => {
-  const y = date.getFullYear().toString().slice(2).padStart(2, `0`);
-  const m = (date.getMonth() + 1).toString().padStart(2, `0`);
-  const d = date.toLocaleString(`en-US`, {day: `2-digit`});
-  const h = date.getHours().toString().padStart(2, `0`);
-  const min = date.getMinutes().toString().padStart(2, `0`);
-
-  return `${y}/${m}/${d} ${h}:${min}`;
+export const getMomentISOFormat = (inputMoment) => {
+  return moment(inputMoment).toISOString();
 }
 
-export const getDayMilliseconds = (date) => {
-  return Math.floor(date.getTime() / 1000 / 60 / 60 / 24);
+export  const getMomentSlashedFormat = (inputMoment) => {
+  return moment(inputMoment).format(`YY/MM/DD HH:mm`);
 }
 
-export const getTimeBetween = (startDate, endDate) => {
-  const gap = endDate.getTime() - startDate.getTime();
 
-  const d = Math.floor(gap / 1000 / 60 / 60 / 24);
-  const h = Math.floor((gap / 1000 / 60 / 60) % 24);
-  const m = Math.floor((gap / 1000 / 60) % 60);
+export const getTimeBetween = (startMoment, endMoment) => {
+  const d = moment(endMoment).diff(startMoment, `days`);
+  const h = moment(endMoment).diff(startMoment, `hours`) % 24;
+  const m = moment(endMoment).diff(startMoment, `minutes`) % 60;
 
   let gapString = ``;
 

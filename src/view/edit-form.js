@@ -1,8 +1,8 @@
-import {getDateSlashedFormat} from "../utils.js";
+import {getMomentSlashedFormat} from "../utils.js";
 
 
 export const createEditFormTemplate = (routeEvent) => {
-  const {eventType, destination, startTime, endTime, price} = routeEvent;
+  const {eventType, destination, startMoment, endMoment, price} = routeEvent;
 
   const {
     name: eventName,
@@ -174,12 +174,12 @@ export const createEditFormTemplate = (routeEvent) => {
                 <label class="visually-hidden" for="event-start-time-1">
                   From
                 </label>
-                <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getDateSlashedFormat(startTime)}">
+                <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getMomentSlashedFormat(startMoment)}">
                 &mdash;
                 <label class="visually-hidden" for="event-end-time-1">
                   To
                 </label>
-                <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getDateSlashedFormat(endTime)}">
+                <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getMomentSlashedFormat(endMoment)}">
               </div>
 
               <div class="event__field-group  event__field-group--price">

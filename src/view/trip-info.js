@@ -1,5 +1,5 @@
-import {getDayAsString} from "../utils.js";
-import moment from "moment";
+import {getMomentMonthDayAsString, getMomentDayAsString} from "../utils.js";
+
 
 export const createTripInfoTemplate = (routeEvents) => {
   const firstDestination = routeEvents[0].destination.name;
@@ -9,14 +9,14 @@ export const createTripInfoTemplate = (routeEvents) => {
     ? routeEvents[1].destination.name
     : `...`;
 
-  const firstDate = routeEvents[0].startTime;
-  const lastDate = routeEvents[routeEvents.length - 1].startTime;
+  const firstMoment = routeEvents[0].startMoment;
+  const lastMoment = routeEvents[routeEvents.length - 1].startMoment;
 
-  const start = getDayAsString(firstDate);
+  const start = getMomentMonthDayAsString(firstMoment);
 
-  const end = moment(lastDate).isSame(moment(firstDate), `month`)
-    ? lastDate.getDate().toString().padStart(2, `0`)
-    : getDayAsString(lastDate);
+  const end = lastMoment.isSame(firstMoment, `month`)
+    ? getMomentMonthDayAsString(lastMoment)
+    : getMomentDayAsString(lastMoment);
 
 
   let totalPrice = 0;

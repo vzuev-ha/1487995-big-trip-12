@@ -1,7 +1,7 @@
-import {getTimeAsString, getDateISOFormat, getTimeBetween} from "../utils.js";
+import {getMomentTimeAsString, getMomentISOFormat, getTimeBetween} from "../utils.js";
 
 export const createEventTemplate = (routeEvent) => {
-  const {eventType, destination, startTime, endTime, price} = routeEvent;
+  const {eventType, destination, startMoment, endMoment, price} = routeEvent;
 
   const {
     name: eventName,
@@ -42,11 +42,11 @@ export const createEventTemplate = (routeEvent) => {
 
                     <div class="event__schedule">
                       <p class="event__time">
-                        <time class="event__start-time" datetime="${getDateISOFormat(startTime)}">${getTimeAsString(startTime)}</time>
+                        <time class="event__start-time" datetime="${getMomentISOFormat(startMoment)}">${getMomentTimeAsString(startMoment)}</time>
                         &mdash;
-                        <time class="event__end-time" datetime="${getDateISOFormat(endTime)}">${getTimeAsString(endTime)}</time>
+                        <time class="event__end-time" datetime="${getMomentISOFormat(endMoment)}">${getMomentTimeAsString(endMoment)}</time>
                       </p>
-                      <p class="event__duration">${getTimeBetween(startTime, endTime)}</p>
+                      <p class="event__duration">${getTimeBetween(startMoment, endMoment)}</p>
                     </div>
 
                     <p class="event__price">
