@@ -7,7 +7,7 @@ import {createRouteContainerTemplate} from "./view/route-container.js";
 import DayView from "./view/day.js";
 import DayEventsContainerView from "./view/day-events-container.js";
 
-import {createEventTemplate} from "./view/event.js";
+import EventView from "./view/event.js";
 import EditFormView from "./view/edit-form.js";
 import {generateEvent} from "./mock/event.js";
 
@@ -42,7 +42,7 @@ const mainContainerElement = document.querySelector(`.trip-events`);
 renderTemplate(mainContainerElement, createSortTemplate(), RenderPosition.BEFOREEND);
 
 // Форма редактирования
-renderElement(mainContainerElement, new EditFormView(routeEvents[990]).getElement(), RenderPosition.BEFOREEND);
+renderElement(mainContainerElement, new EditFormView(routeEvents[0]).getElement(), RenderPosition.BEFOREEND);
 
 
 // Контейнер точек маршрута
@@ -78,5 +78,5 @@ for (let i = 1; i < EVENT_COUNT; i++) {
     dayIndex++;
   }
 
-  renderTemplate(dayEventsContainerElement, createEventTemplate(routeEvents[i]), RenderPosition.BEFOREEND);
+  renderElement(dayEventsContainerElement, new EventView(routeEvents[i]).getElement(), RenderPosition.BEFOREEND);
 }

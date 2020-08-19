@@ -1,6 +1,6 @@
-import {getMomentTimeAsString, getMomentISOFormat, getTimeBetween} from "../utils.js";
+import {createElement, getMomentTimeAsString, getMomentISOFormat, getTimeBetween} from "../utils.js";
 
-export const createEventTemplate = (routeEvent) => {
+const createEventTemplate = (routeEvent) => {
   const {eventType, destination, startMoment, endMoment, price} = routeEvent;
 
   const {
@@ -61,3 +61,23 @@ export const createEventTemplate = (routeEvent) => {
                   </div>
                 </li>`;
 };
+
+
+export default class EventView {
+  constructor(routeEvent) {
+    this._routeEvent = routeEvent;
+    this._element = createElement(this.getTemplate());
+  }
+
+  getTemplate() {
+    return createEventTemplate(this._routeEvent);
+  }
+
+  getElement() {
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
