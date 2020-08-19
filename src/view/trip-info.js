@@ -2,22 +2,30 @@ import {createElement, getMomentMonthDayAsString, getMomentDayAsString} from "..
 
 
 const createTripInfoTemplate = (routeEvents) => {
-  const firstDestination = routeEvents[0].destination.name;
-  const lastDestination = routeEvents[routeEvents.length - 1].destination.name;
+  let destinationString = ``;
+  let datesString = ``;
 
-  const middleDestination = routeEvents.length === 3
-    ? routeEvents[1].destination.name
-    : `...`;
+  if (routeEvents.length > 0) {
+    const firstDestination = routeEvents[0].destination.name;
+    const lastDestination = routeEvents[routeEvents.length - 1].destination.name;
 
-  const firstMoment = routeEvents[0].startMoment;
-  const lastMoment = routeEvents[routeEvents.length - 1].startMoment;
+    const middleDestination = routeEvents.length === 3
+      ? routeEvents[1].destination.name
+      : `...`;
 
-  const start = getMomentMonthDayAsString(firstMoment);
+    destinationString = `              <h1 class="trip-info__title">${firstDestination} &mdash; ${middleDestination} &mdash; ${lastDestination}</h1>`;
 
-  const end = lastMoment.isSame(firstMoment, `month`)
-    ? getMomentMonthDayAsString(lastMoment)
-    : getMomentDayAsString(lastMoment);
+    const firstMoment = routeEvents[0].startMoment;
+    const lastMoment = routeEvents[routeEvents.length - 1].startMoment;
 
+    const start = getMomentMonthDayAsString(firstMoment);
+
+    const end = lastMoment.isSame(firstMoment, `month`)
+      ? getMomentMonthDayAsString(lastMoment)
+      : getMomentDayAsString(lastMoment);
+
+    datesString = `              <p class="trip-info__dates">${start}&nbsp;&mdash;&nbsp;${end}</p>`;
+  }
 
   let totalPrice = 0;
   // Посчитаем полную стоимость поездки
@@ -37,12 +45,17 @@ const createTripInfoTemplate = (routeEvents) => {
     totalPrice += parseInt(eventPrice, 10) + subTotal;
   }
 
-  return `          <section class="trip-main__trip-info  trip-info">
-            <div class="trip-info__main">
-              <h1 class="trip-info__title">${firstDestination} &mdash; ${middleDestination} &mdash; ${lastDestination}</h1>
 
-              <p class="trip-info__dates">${start}&nbsp;&mdash;&nbsp;${end}</p>
-            </div>
+  const tripInfoString = destinationString || datesString
+    ? `            <div class="trip-info__main">
+              ${destinationString}
+
+              ${datesString}
+            </div>`
+    : ``;
+
+  return `          <section class="trip-main__trip-info  trip-info">
+            ${tripInfoString}
 
             <p class="trip-info__cost">
               Total: &euro;&nbsp;<span class="trip-info__cost-value">${totalPrice}</span>
