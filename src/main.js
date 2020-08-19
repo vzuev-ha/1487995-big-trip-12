@@ -3,7 +3,7 @@ import SiteMenuView from "./view/site-menu.js";
 import FiltersView from "./view/filters.js";
 import {createSortTemplate} from "./view/sort.js";
 
-import {createRouteContainerTemplate} from "./view/route-container.js";
+import RouteContainerView from "./view/route-container.js";
 import DayView from "./view/day.js";
 import DayEventsContainerView from "./view/day-events-container.js";
 
@@ -46,7 +46,7 @@ renderElement(mainContainerElement, new EditFormView(routeEvents[0]).getElement(
 
 
 // Контейнер точек маршрута
-renderTemplate(mainContainerElement, createRouteContainerTemplate(), RenderPosition.BEFOREEND);
+renderElement(mainContainerElement, new RouteContainerView().getElement(), RenderPosition.BEFOREEND);
 
 const routeContainerElement = mainContainerElement.querySelector(`.trip-days`);
 
