@@ -5,7 +5,7 @@ import {createSortTemplate} from "./view/sort.js";
 import {createEditFormTemplate} from "./view/edit-form.js";
 
 import {createRouteContainerTemplate} from "./view/route-container.js";
-import {createDayTemplate} from "./view/day.js";
+import DayView from "./view/day.js";
 import {createDayEventsContainerTemplate} from "./view/day-events-container.js";
 
 import {createEventTemplate} from "./view/event.js";
@@ -64,7 +64,7 @@ for (let i = 1; i < EVENT_COUNT; i++) {
 
   // Вставляем блок очередного дня
   if (!previousMoment.isSame(currentMoment, `day`)) {
-    renderTemplate(routeContainerElement, createDayTemplate(startMoment, dayIndex), RenderPosition.BEFOREEND);
+    renderElement(routeContainerElement, new DayView(startMoment, dayIndex).getElement(), RenderPosition.BEFOREEND);
 
     // Контейнер точек дня
     const days = routeContainerElement.querySelectorAll(`.trip-days__item`);
