@@ -22,6 +22,14 @@ const routeEvents = new Array(EVENT_COUNT).fill(undefined).map(generateEvent)
   .sort((a, b) => a.startMoment.diff(b.startMoment));
 
 
+const renderRouteEvent =(container, routeEvent) => {
+  const eventComponent = new EventView(routeEvent);
+  const eventEditComponent = new EditFormView(routeEvent);
+
+  render(container, eventComponent.getElement(), RenderPosition.BEFOREEND);
+}
+
+
 const headerTripInfoElement = document.querySelector(`.trip-main`);
 const headerTripControls = headerTripInfoElement
   .querySelector(`.trip-main__trip-controls`)
@@ -41,9 +49,6 @@ const mainContainerElement = document.querySelector(`.trip-events`);
 // Сортировка
 render(mainContainerElement, new SortView().getElement(), RenderPosition.BEFOREEND);
 
-// Форма редактирования
-render(mainContainerElement, new EditFormView(routeEvents[0]).getElement(), RenderPosition.BEFOREEND);
-
 
 // Контейнер точек маршрута
 render(mainContainerElement, new RouteContainerView().getElement(), RenderPosition.BEFOREEND);
@@ -57,7 +62,7 @@ let previousMoment = moment(veryOldMoment);
 
 let dayEventsContainerElement = null;
 
-for (let i = 1; i < EVENT_COUNT; i++) {
+for (let i = 0; i < EVENT_COUNT; i++) {
   const {startMoment} = routeEvents[i];
   const currentMoment = moment(startMoment);
   // const currentDayMilliseconds = getDayMilliseconds(startTime);
@@ -78,5 +83,5 @@ for (let i = 1; i < EVENT_COUNT; i++) {
     dayIndex++;
   }
 
-  render(dayEventsContainerElement, new EventView(routeEvents[i]).getElement(), RenderPosition.BEFOREEND);
+  renderRouteEvent(dayEventsContainerElement, routeEvents[i]);
 }
