@@ -1,7 +1,7 @@
-import {createTripInfoTemplate} from "./view/trip-info.js";
+import TripInfoView from "./view/trip-info.js";
 import SiteMenuView from "./view/site-menu.js";
 import FiltersView from "./view/filters.js";
-import {createSortTemplate} from "./view/sort.js";
+import SortView from "./view/sort.js";
 
 import RouteContainerView from "./view/route-container.js";
 import DayView from "./view/day.js";
@@ -11,7 +11,7 @@ import EventView from "./view/event.js";
 import EditFormView from "./view/edit-form.js";
 import {generateEvent} from "./mock/event.js";
 
-import {renderTemplate, renderElement, RenderPosition, veryOldMoment} from "./utils.js";
+import {renderElement, RenderPosition, veryOldMoment} from "./utils.js";
 
 import moment from 'moment';
 
@@ -28,7 +28,7 @@ const headerTripControls = headerTripInfoElement
   .querySelectorAll(`h2`);
 
 // Информация о маршруте
-renderTemplate(headerTripInfoElement, createTripInfoTemplate(routeEvents), RenderPosition.AFTERBEGIN);
+renderElement(headerTripInfoElement, new TripInfoView(routeEvents).getElement(), RenderPosition.AFTERBEGIN);
 
 // Меню
 renderElement(headerTripControls[0], new SiteMenuView().getElement(), RenderPosition.AFTEREND);
@@ -39,7 +39,7 @@ renderElement(headerTripControls[1], new FiltersView().getElement(), RenderPosit
 const mainContainerElement = document.querySelector(`.trip-events`);
 
 // Сортировка
-renderTemplate(mainContainerElement, createSortTemplate(), RenderPosition.BEFOREEND);
+renderElement(mainContainerElement, new SortView().getElement(), RenderPosition.BEFOREEND);
 
 // Форма редактирования
 renderElement(mainContainerElement, new EditFormView(routeEvents[0]).getElement(), RenderPosition.BEFOREEND);

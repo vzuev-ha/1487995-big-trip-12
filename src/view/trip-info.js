@@ -1,7 +1,7 @@
-import {getMomentMonthDayAsString, getMomentDayAsString} from "../utils.js";
+import {createElement, getMomentMonthDayAsString, getMomentDayAsString} from "../utils.js";
 
 
-export const createTripInfoTemplate = (routeEvents) => {
+const createTripInfoTemplate = (routeEvents) => {
   const firstDestination = routeEvents[0].destination.name;
   const lastDestination = routeEvents[routeEvents.length - 1].destination.name;
 
@@ -49,3 +49,25 @@ export const createTripInfoTemplate = (routeEvents) => {
             </p>
           </section>`;
 };
+
+
+export default class TripInfoView {
+  constructor(routeEvents) {
+    this._routeEvents = routeEvents;
+    this._element = createElement(this.getTemplate());
+    // console.log(this.getTemplate());
+    // console.log(this._element);
+  }
+
+  getTemplate() {
+    return createTripInfoTemplate(this._routeEvents);
+  }
+
+  getElement() {
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
