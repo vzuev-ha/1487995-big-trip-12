@@ -2,13 +2,13 @@ import {createTripInfoTemplate} from "./view/trip-info.js";
 import SiteMenuView from "./view/site-menu.js";
 import FiltersView from "./view/filters.js";
 import {createSortTemplate} from "./view/sort.js";
-import {createEditFormTemplate} from "./view/edit-form.js";
 
 import {createRouteContainerTemplate} from "./view/route-container.js";
 import DayView from "./view/day.js";
 import DayEventsContainerView from "./view/day-events-container.js";
 
 import {createEventTemplate} from "./view/event.js";
+import EditFormView from "./view/edit-form.js";
 import {generateEvent} from "./mock/event.js";
 
 import {renderTemplate, renderElement, RenderPosition, veryOldMoment} from "./utils.js";
@@ -42,7 +42,7 @@ const mainContainerElement = document.querySelector(`.trip-events`);
 renderTemplate(mainContainerElement, createSortTemplate(), RenderPosition.BEFOREEND);
 
 // Форма редактирования
-renderTemplate(mainContainerElement, createEditFormTemplate(routeEvents[0]), RenderPosition.BEFOREEND);
+renderElement(mainContainerElement, new EditFormView(routeEvents[990]).getElement(), RenderPosition.BEFOREEND);
 
 
 // Контейнер точек маршрута

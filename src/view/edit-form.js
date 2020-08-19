@@ -1,7 +1,27 @@
-import {getMomentSlashedFormat} from "../utils.js";
+import {createElement, getMomentSlashedFormat} from "../utils.js";
+import moment from 'moment';
 
 
-export const createEditFormTemplate = (routeEvent) => {
+const BLANK_EVENT = {
+  eventType: {
+    name: `Flignt`,
+    value: `flight`,
+    preposition: `to`,
+    eventOffers: []
+  },
+  destination: {
+    name: ``,
+    description: ``,
+    photos: []
+  },
+  startMoment: moment(),
+  endMoment: moment(),
+  price: ``,
+  isFavorite: false
+};
+
+
+const createEditFormTemplate = (routeEvent) => {
   const {eventType, destination, startMoment, endMoment, price} = routeEvent;
 
   const {
@@ -197,3 +217,23 @@ export const createEditFormTemplate = (routeEvent) => {
             ${detailsHTML}
           </form>`;
 };
+
+
+export default class EditFormView {
+  constructor(routeEvent) {
+    this._routeEvent = routeEvent || BLANK_EVENT;
+    this._element = createElement(this.getTemplate());
+  }
+
+  getTemplate() {
+    return createEditFormTemplate(this._routeEvent);
+  }
+
+  getElement() {
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
