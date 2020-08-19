@@ -1,6 +1,6 @@
 import {createTripInfoTemplate} from "./view/trip-info.js";
-import {createFiltersTemplate} from "./view/filters.js";
-import {createMenuTemplate} from "./view/site-menu.js";
+import SiteMenuView from "./view/site-menu.js";
+import FiltersView from "./view/filters.js";
 import {createSortTemplate} from "./view/sort.js";
 import {createEditFormTemplate} from "./view/edit-form.js";
 
@@ -11,7 +11,7 @@ import {createDayEventsContainerTemplate} from "./view/day-events-container.js";
 import {createEventTemplate} from "./view/event.js";
 import {generateEvent} from "./mock/event.js";
 
-import {render, RenderPosition, veryOldMoment} from "./utils.js";
+import {renderTemplate, renderElement, RenderPosition, veryOldMoment} from "./utils.js";
 
 import moment from 'moment';
 
@@ -28,25 +28,25 @@ const headerTripControls = headerTripInfoElement
   .querySelectorAll(`h2`);
 
 // Информация о маршруте
-render(headerTripInfoElement, createTripInfoTemplate(routeEvents), RenderPosition.AFTERBEGIN);
+renderTemplate(headerTripInfoElement, createTripInfoTemplate(routeEvents), RenderPosition.AFTERBEGIN);
 
 // Меню
-render(headerTripControls[0], createMenuTemplate(), RenderPosition.AFTEREND);
+renderElement(headerTripControls[0], new SiteMenuView().getElement(), RenderPosition.AFTEREND);
 // Фильтры
-render(headerTripControls[1], createFiltersTemplate(), RenderPosition.AFTEREND);
+renderElement(headerTripControls[1], new FiltersView().getElement(), RenderPosition.AFTEREND);
 
 
 const mainContainerElement = document.querySelector(`.trip-events`);
 
 // Сортировка
-render(mainContainerElement, createSortTemplate(), RenderPosition.BEFOREEND);
+renderTemplate(mainContainerElement, createSortTemplate(), RenderPosition.BEFOREEND);
 
 // Форма редактирования
-render(mainContainerElement, createEditFormTemplate(routeEvents[0]), RenderPosition.BEFOREEND);
+renderTemplate(mainContainerElement, createEditFormTemplate(routeEvents[0]), RenderPosition.BEFOREEND);
 
 
 // Контейнер точек маршрута
-render(mainContainerElement, createRouteContainerTemplate(), RenderPosition.BEFOREEND);
+renderTemplate(mainContainerElement, createRouteContainerTemplate(), RenderPosition.BEFOREEND);
 
 const routeContainerElement = mainContainerElement.querySelector(`.trip-days`);
 
@@ -64,12 +64,12 @@ for (let i = 1; i < EVENT_COUNT; i++) {
 
   // Вставляем блок очередного дня
   if (!previousMoment.isSame(currentMoment, `day`)) {
-    render(routeContainerElement, createDayTemplate(startMoment, dayIndex), RenderPosition.BEFOREEND);
+    renderTemplate(routeContainerElement, createDayTemplate(startMoment, dayIndex), RenderPosition.BEFOREEND);
 
     // Контейнер точек дня
     const days = routeContainerElement.querySelectorAll(`.trip-days__item`);
     const dayElement = days[days.length - 1];
-    render(dayElement, createDayEventsContainerTemplate(), RenderPosition.BEFOREEND);
+    renderTemplate(dayElement, createDayEventsContainerTemplate(), RenderPosition.BEFOREEND);
 
     // Точки дня
     dayEventsContainerElement = dayElement.querySelector(`.trip-events__list`);
@@ -78,5 +78,5 @@ for (let i = 1; i < EVENT_COUNT; i++) {
     dayIndex++;
   }
 
-  render(dayEventsContainerElement, createEventTemplate(routeEvents[i]), RenderPosition.BEFOREEND);
+  renderTemplate(dayEventsContainerElement, createEventTemplate(routeEvents[i]), RenderPosition.BEFOREEND);
 }

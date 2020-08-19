@@ -13,7 +13,11 @@ export const renderElement = (container, element, place) => {
       container.prepend(element);
       break;
     case RenderPosition.AFTEREND:
-      container.parentElement.insertAfter(element, container);
+      if (container.parentElement.lastElementChild === container) {
+        container.parentElement.append(element);
+      } else {
+        container.parentElement.insertBefore(element, container.nextElementSibling);
+      }
       break;
     case RenderPosition.BEFOREEND:
       container.append(element);
@@ -21,7 +25,7 @@ export const renderElement = (container, element, place) => {
   }
 };
 
-export const render = (container, template, place) => {
+export const renderTemplate = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
 
