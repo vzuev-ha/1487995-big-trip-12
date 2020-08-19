@@ -6,7 +6,7 @@ import {createEditFormTemplate} from "./view/edit-form.js";
 
 import {createRouteContainerTemplate} from "./view/route-container.js";
 import DayView from "./view/day.js";
-import {createDayEventsContainerTemplate} from "./view/day-events-container.js";
+import DayEventsContainerView from "./view/day-events-container.js";
 
 import {createEventTemplate} from "./view/event.js";
 import {generateEvent} from "./mock/event.js";
@@ -69,7 +69,7 @@ for (let i = 1; i < EVENT_COUNT; i++) {
     // Контейнер точек дня
     const days = routeContainerElement.querySelectorAll(`.trip-days__item`);
     const dayElement = days[days.length - 1];
-    renderTemplate(dayElement, createDayEventsContainerTemplate(), RenderPosition.BEFOREEND);
+    renderElement(dayElement, new DayEventsContainerView().getElement(), RenderPosition.BEFOREEND);
 
     // Точки дня
     dayEventsContainerElement = dayElement.querySelector(`.trip-events__list`);
