@@ -34,13 +34,23 @@ const renderRouteEvent =(container, routeEvent) => {
     container.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
   };
 
+  const onEscKeyDown = (evt) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      evt.preventDefault();
+      replaceFormToCard();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
   eventComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
     replaceCardToForm();
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   eventEditComponent.getElement().querySelector(`form`).addEventListener(`submit`, (evt) => {
     evt.preventDefault();
     replaceFormToCard();
+    document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
 
