@@ -19,11 +19,20 @@ import moment from 'moment';
 
 const EVENT_COUNT = 20;
 
-const routeEvents = new Array(EVENT_COUNT).fill(undefined).map(generateEvent)
+const routeEventsArray = new Array(EVENT_COUNT).fill(undefined).map(generateEvent)
   .sort((a, b) => a.startMoment.diff(b.startMoment));
 
 
-const renderRouteEvent =(container, routeEvent) => {
+const headerTripInfoElement = document.querySelector(`.trip-main`);
+const headerTripControls = headerTripInfoElement
+  .querySelector(`.trip-main__trip-controls`)
+  .querySelectorAll(`h2`);
+
+// Найдем основной контейнер
+const mainContainer = document.querySelector(`.trip-events`);
+
+
+const renderRouteEvent = (container, routeEvent) => {
   const eventComponent = new EventView(routeEvent);
   const eventEditComponent = new EditFormView(routeEvent);
 
@@ -59,27 +68,12 @@ const renderRouteEvent =(container, routeEvent) => {
 }
 
 
-const headerTripInfoElement = document.querySelector(`.trip-main`);
-const headerTripControls = headerTripInfoElement
-  .querySelector(`.trip-main__trip-controls`)
-  .querySelectorAll(`h2`);
-
-// Информация о маршруте
-render(headerTripInfoElement, new TripInfoView(routeEvents).getElement(), RenderPosition.AFTERBEGIN);
-
-// Меню
-render(headerTripControls[0], new SiteMenuView().getElement(), RenderPosition.AFTEREND);
-// Фильтры
-render(headerTripControls[1], new FiltersView().getElement(), RenderPosition.AFTEREND);
-
-
-// Найдем основной контейнер
-const mainContainerElement = document.querySelector(`.trip-events`);
-
-
-if (routeEvents.length === 0) {
-  render(mainContainerElement, new NoEventView().getElement(), RenderPosition.BEFOREEND);
-} else {
+const renderMainContainer = (mainContainerElement, routeEvents) => {
+  // Если точек на маршруте нет - рисуем заглушку
+  if (routeEvents.length === 0) {
+    render(mainContainerElement, new NoEventView().getElement(), RenderPosition.BEFOREEND);
+    return;
+  }
   // Сортировка
   render(mainContainerElement, new SortView().getElement(), RenderPosition.BEFOREEND);
 
@@ -120,3 +114,18 @@ if (routeEvents.length === 0) {
     renderRouteEvent(dayEventsContainerElement, routeEvents[i]);
   }
 }
+
+//////////////////////////////////////////////
+// Основной блок
+//////////////////////////////////////////////
+
+// Информация о маршруте
+render(headerTripInfoElement, new TripInfoView(routeEventsArray).getElement(), RenderPosition.AFTERBEGIN);
+
+// Меню
+render(headerTripControls[0], new SiteMenuView().getElement(), RenderPosition.AFTEREND);
+// Фильтры
+render(headerTripControls[1], new FiltersView().getElement(), RenderPosition.AFTEREND);
+
+// Основной контейнер с точками маршрута
+renderMainContainer(mainContainer, routeEventsArray);
