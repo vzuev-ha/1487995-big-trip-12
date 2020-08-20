@@ -1,4 +1,6 @@
 import {getRandomInteger} from "../utils.js";
+import moment from 'moment';
+
 
 const generateEventType = () => {
   const eventTypes = [
@@ -177,38 +179,27 @@ const generateDestination = () => {
     name: destinations[getRandomInteger(0, destinations.length - 1)],
     description,
     photos: Array(getRandomInteger(0, 6))
-      .fill()
+      .fill(undefined)
       .map(() => `http://picsum.photos/248/152?r=${Math.random()}`)
   };
 };
 
 
-const generateStartTime = () => {
-  const maxDaysGap = 3;
-  const daysGap = getRandomInteger(-maxDaysGap, maxDaysGap);
-  const startTime = new Date();
+const generateStartMoment = () => {
+  const maxDaysGap = 7;
 
-  startTime.setDate(startTime.getDate() + daysGap);
-
-  const h = getRandomInteger(0, 23);
-  const m = 5 * getRandomInteger(0, 11);
-
-  startTime.setHours(h, m, 0, 0);
-
-  return new Date(startTime);
+  return moment()
+    .add(getRandomInteger(-maxDaysGap, maxDaysGap), `days`)
+    .hours(getRandomInteger(0, 23))
+    .minutes(5 * getRandomInteger(0, 11));
 };
 
 
-const generateEndTime = (startTime) => {
-  const endTime = new Date(startTime);
-
-  const d = getRandomInteger(0, 2);
-  const h = getRandomInteger(0, 23);
-  const m = 5 * getRandomInteger(0, 11);
-
-  endTime.setTime(startTime.getTime() + (d * 24 * 60 * 60 * 1000) + (h * 60 * 60 * 1000) + (m * 60 * 1000));
-
-  return new Date(endTime);
+const generateEndMoment = (startMoment) => {
+  return moment(startMoment)
+    .add(getRandomInteger(0, 2), `days`)
+    .hours(getRandomInteger(0, 23))
+    .minutes(5 * getRandomInteger(0, 11));
 };
 
 
@@ -218,13 +209,13 @@ const generatePrice = () => {
 
 
 export const generateEvent = () => {
-  const startTime = generateStartTime();
+  const startMoment = generateStartMoment();
 
   return {
     eventType: generateEventType(),
     destination: generateDestination(),
-    startTime,
-    endTime: generateEndTime(startTime),
+    startMoment,
+    endMoment: generateEndMoment(startMoment),
     price: generatePrice(),
     isFavorite: Boolean(getRandomInteger(0, 1))
   };
