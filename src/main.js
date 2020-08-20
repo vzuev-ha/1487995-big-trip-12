@@ -3,6 +3,7 @@ import SiteMenuView from "./view/site-menu.js";
 import FiltersView from "./view/filters.js";
 import SortView from "./view/sort.js";
 
+import NoEventView from "./view/no-event";
 import RouteContainerView from "./view/route-container.js";
 import DayView from "./view/day.js";
 import DayEventsContainerView from "./view/day-events-container.js";
@@ -72,44 +73,50 @@ render(headerTripControls[0], new SiteMenuView().getElement(), RenderPosition.AF
 render(headerTripControls[1], new FiltersView().getElement(), RenderPosition.AFTEREND);
 
 
+// Найдем основной контейнер
 const mainContainerElement = document.querySelector(`.trip-events`);
 
-// Сортировка
-render(mainContainerElement, new SortView().getElement(), RenderPosition.BEFOREEND);
+
+if (routeEvents.length === 0) {
+  render(mainContainerElement, new NoEventView().getElement(), RenderPosition.BEFOREEND);
+} else {
+  // Сортировка
+  render(mainContainerElement, new SortView().getElement(), RenderPosition.BEFOREEND);
 
 
-// Контейнер точек маршрута
-render(mainContainerElement, new RouteContainerView().getElement(), RenderPosition.BEFOREEND);
+  // Контейнер точек маршрута
+  render(mainContainerElement, new RouteContainerView().getElement(), RenderPosition.BEFOREEND);
 
-const routeContainerElement = mainContainerElement.querySelector(`.trip-days`);
+  const routeContainerElement = mainContainerElement.querySelector(`.trip-days`);
 
 
-// Наполняем событиями
-let dayIndex = 1;
-let previousMoment = moment(veryOldMoment);
+  // Наполняем событиями
+  let dayIndex = 1;
+  let previousMoment = moment(veryOldMoment);
 
-let dayEventsContainerElement = null;
+  let dayEventsContainerElement = null;
 
-for (let i = 0; i < EVENT_COUNT; i++) {
-  const {startMoment} = routeEvents[i];
-  const currentMoment = moment(startMoment);
-  // const currentDayMilliseconds = getDayMilliseconds(startTime);
+  for (let i = 0; i < EVENT_COUNT; i++) {
+    const {startMoment} = routeEvents[i];
+    const currentMoment = moment(startMoment);
+    // const currentDayMilliseconds = getDayMilliseconds(startTime);
 
-  // Вставляем блок очередного дня
-  if (!previousMoment.isSame(currentMoment, `day`)) {
-    render(routeContainerElement, new DayView(startMoment, dayIndex).getElement(), RenderPosition.BEFOREEND);
+    // Вставляем блок очередного дня
+    if (!previousMoment.isSame(currentMoment, `day`)) {
+      render(routeContainerElement, new DayView(startMoment, dayIndex).getElement(), RenderPosition.BEFOREEND);
 
-    // Контейнер точек дня
-    const days = routeContainerElement.querySelectorAll(`.trip-days__item`);
-    const dayElement = days[days.length - 1];
-    render(dayElement, new DayEventsContainerView().getElement(), RenderPosition.BEFOREEND);
+      // Контейнер точек дня
+      const days = routeContainerElement.querySelectorAll(`.trip-days__item`);
+      const dayElement = days[days.length - 1];
+      render(dayElement, new DayEventsContainerView().getElement(), RenderPosition.BEFOREEND);
 
-    // Точки дня
-    dayEventsContainerElement = dayElement.querySelector(`.trip-events__list`);
+      // Точки дня
+      dayEventsContainerElement = dayElement.querySelector(`.trip-events__list`);
 
-    previousMoment = moment(currentMoment);
-    dayIndex++;
+      previousMoment = moment(currentMoment);
+      dayIndex++;
+    }
+
+    renderRouteEvent(dayEventsContainerElement, routeEvents[i]);
   }
-
-  renderRouteEvent(dayEventsContainerElement, routeEvents[i]);
 }
