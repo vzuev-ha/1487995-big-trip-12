@@ -1,4 +1,4 @@
-import {getMomentSlashedFormat} from "../utils.js";
+import {getMomentSlashedFormat} from "../utils/event.js";
 import AbstractView from "./abstract.js";
 import moment from 'moment';
 

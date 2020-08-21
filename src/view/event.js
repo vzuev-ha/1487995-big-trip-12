@@ -1,4 +1,4 @@
-import {getMomentTimeAsString, getMomentISOFormat, getTimeBetween} from "../utils.js";
+import {getMomentTimeAsString, getMomentISOFormat, getTimeBetween} from "../utils/event.js";
 import AbstractView from "./abstract.js";
 
 const createEventTemplate = (tripEvent) => {

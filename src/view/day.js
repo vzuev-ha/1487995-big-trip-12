@@ -1,4 +1,4 @@
-import {getMomentMonthDayAsString, getMomentISOFormat} from "../utils.js";
+import {getMomentMonthDayAsString, getMomentISOFormat} from "../utils/event.js";
 import AbstractView from "./abstract.js";
 
 const createDayTemplate = (startMoment, dayIndex) => {

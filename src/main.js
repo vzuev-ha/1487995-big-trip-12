@@ -12,7 +12,8 @@ import EventView from "./view/event.js";
 import EditFormView from "./view/edit-form.js";
 import {generateEvent} from "./mock/event.js";
 
-import {render, RenderPosition, veryOldMoment} from "./utils.js";
+import {render, RenderPosition, replace} from "./utils/render.js";
+import {veryOldMoment} from "./utils/event.js";
 
 import moment from 'moment';
 
@@ -37,11 +38,11 @@ const renderTripEvent = (container, tripEvent) => {
   const eventEditComponent = new EditFormView(tripEvent);
 
   const replaceCardToForm = () => {
-    container.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
+    replace(eventEditComponent, eventComponent);
   };
 
   const replaceFormToCard = () => {
-    container.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
+    replace(eventComponent, eventEditComponent);
   };
 
   const onEscKeyDown = (evt) => {
@@ -63,22 +64,22 @@ const renderTripEvent = (container, tripEvent) => {
   });
 
 
-  render(container, eventComponent.getElement(), RenderPosition.BEFOREEND);
+  render(container, eventComponent, RenderPosition.BEFOREEND);
 }
 
 
 const renderMainContainer = (mainContainerElement, tripEvents) => {
   // Если точек на маршруте нет - рисуем заглушку
   if (tripEvents.length === 0) {
-    render(mainContainerElement, new NoEventView().getElement(), RenderPosition.BEFOREEND);
+    render(mainContainerElement, new NoEventView(), RenderPosition.BEFOREEND);
     return;
   }
   // Сортировка
-  render(mainContainerElement, new SortView().getElement(), RenderPosition.BEFOREEND);
+  render(mainContainerElement, new SortView(), RenderPosition.BEFOREEND);
 
 
   // Контейнер точек маршрута
-  render(mainContainerElement, new TripContainerView().getElement(), RenderPosition.BEFOREEND);
+  render(mainContainerElement, new TripContainerView(), RenderPosition.BEFOREEND);
 
   const tripContainerElement = mainContainerElement.querySelector(`.trip-days`);
 
@@ -96,12 +97,12 @@ const renderMainContainer = (mainContainerElement, tripEvents) => {
 
     // Вставляем блок очередного дня
     if (!previousMoment.isSame(currentMoment, `day`)) {
-      render(tripContainerElement, new DayView(startMoment, dayIndex).getElement(), RenderPosition.BEFOREEND);
+      render(tripContainerElement, new DayView(startMoment, dayIndex), RenderPosition.BEFOREEND);
 
       // Контейнер точек дня
       const days = tripContainerElement.querySelectorAll(`.trip-days__item`);
       const dayElement = days[days.length - 1];
-      render(dayElement, new DayEventsContainerView().getElement(), RenderPosition.BEFOREEND);
+      render(dayElement, new DayEventsContainerView(), RenderPosition.BEFOREEND);
 
       // Точки дня
       dayEventsContainerElement = dayElement.querySelector(`.trip-events__list`);
@@ -119,12 +120,12 @@ const renderMainContainer = (mainContainerElement, tripEvents) => {
 //////////////////////////////////////////////
 
 // Информация о маршруте
-render(headerTripInfoElement, new TripInfoView(tripEventsArray).getElement(), RenderPosition.AFTERBEGIN);
+render(headerTripInfoElement, new TripInfoView(tripEventsArray), RenderPosition.AFTERBEGIN);
 
 // Меню
-render(headerTripControls[0], new SiteMenuView().getElement(), RenderPosition.AFTEREND);
+render(headerTripControls[0], new SiteMenuView(), RenderPosition.AFTEREND);
 // Фильтры
-render(headerTripControls[1], new FiltersView().getElement(), RenderPosition.AFTEREND);
+render(headerTripControls[1], new FiltersView(), RenderPosition.AFTEREND);
 
 // Основной контейнер с точками маршрута
 renderMainContainer(mainContainer, tripEventsArray);

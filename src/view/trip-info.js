@@ -1,4 +1,4 @@
-import {getMomentMonthDayAsString, getMomentDayAsString} from "../utils.js";
+import {getMomentMonthDayAsString, getMomentDayAsString} from "../utils/event.js";
 import AbstractView from "./abstract.js";
 
 
