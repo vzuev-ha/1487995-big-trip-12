@@ -1,7 +1,8 @@
-import {createElement, getMomentTimeAsString, getMomentISOFormat, getTimeBetween} from "../utils.js";
+import {getMomentTimeAsString, getMomentISOFormat, getTimeBetween} from "../utils.js";
+import AbstractView from "./abstract.js";
 
-const createEventTemplate = (routeEvent) => {
-  const {eventType, destination, startMoment, endMoment, price} = routeEvent;
+const createEventTemplate = (tripEvent) => {
+  const {eventType, destination, startMoment, endMoment, price} = tripEvent;
 
   const {
     name: eventName,
@@ -63,21 +64,13 @@ const createEventTemplate = (routeEvent) => {
 };
 
 
-export default class EventView {
-  constructor(routeEvent) {
-    this._routeEvent = routeEvent;
-    this._element = createElement(this.getTemplate());
+export default class EventView extends AbstractView {
+  constructor(tripEvent) {
+    super();
+    this._tripEvent = tripEvent;
   }
 
   getTemplate() {
-    return createEventTemplate(this._routeEvent);
-  }
-
-  getElement() {
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+    return createEventTemplate(this._tripEvent);
   }
 }

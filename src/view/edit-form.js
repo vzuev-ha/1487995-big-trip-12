@@ -1,4 +1,5 @@
-import {createElement, getMomentSlashedFormat} from "../utils.js";
+import {getMomentSlashedFormat} from "../utils.js";
+import AbstractView from "./abstract.js";
 import moment from 'moment';
 
 
@@ -21,8 +22,8 @@ const BLANK_EVENT = {
 };
 
 
-const createEditFormTemplate = (routeEvent) => {
-  const {eventType, destination, startMoment, endMoment, price} = routeEvent;
+const createEditFormTemplate = (tripEvent) => {
+  const {eventType, destination, startMoment, endMoment, price} = tripEvent;
 
   const {
     name: eventName,
@@ -221,21 +222,13 @@ const createEditFormTemplate = (routeEvent) => {
 };
 
 
-export default class EditFormView {
-  constructor(routeEvent) {
-    this._routeEvent = routeEvent || BLANK_EVENT;
-    this._element = createElement(this.getTemplate());
+export default class EditFormView extends AbstractView {
+  constructor(tripEvent) {
+    super();
+    this._tripEvent = tripEvent || BLANK_EVENT;
   }
 
   getTemplate() {
-    return createEditFormTemplate(this._routeEvent);
-  }
-
-  getElement() {
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+    return createEditFormTemplate(this._tripEvent);
   }
 }
