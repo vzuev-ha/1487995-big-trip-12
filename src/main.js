@@ -4,10 +4,7 @@ import FiltersView from "./view/filters.js";
 import TripPresenter from "./presenter/trip.js";
 
 import {generateEvent} from "./mock/event.js";
-
 import {render, RenderPosition} from "./utils/render.js";
-
-import moment from 'moment';
 
 
 const EVENT_COUNT = 20;
