@@ -10,19 +10,19 @@ export const getMomentTimeAsString = (inputMoment) => {
 
 export const getMomentMonthDayAsString = (inputMoment) => {
   return moment(inputMoment).format(`MMM DD`);
-}
+};
 
 export const getMomentDayAsString = (inputMoment) => {
   return moment(inputMoment).format(`DD`);
-}
+};
 
 export const getMomentISOFormat = (inputMoment) => {
   return moment(inputMoment).toISOString();
-}
+};
 
-export  const getMomentSlashedFormat = (inputMoment) => {
+export const getMomentSlashedFormat = (inputMoment) => {
   return moment(inputMoment).format(`YY/MM/DD HH:mm`);
-}
+};
 
 
 export const getTimeBetween = (startMoment, endMoment) => {
@@ -43,4 +43,4 @@ export const getTimeBetween = (startMoment, endMoment) => {
   }
 
   return gapString;
-}
+};

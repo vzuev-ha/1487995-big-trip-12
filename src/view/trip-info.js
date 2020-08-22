@@ -65,7 +65,7 @@ const createTripInfoTemplate = (tripEvents) => {
 };
 
 
-export default class TripInfoView extends AbstractView{
+export default class TripInfoView extends AbstractView {
   constructor(tripEvents) {
     super();
     this._tripEvents = tripEvents;
