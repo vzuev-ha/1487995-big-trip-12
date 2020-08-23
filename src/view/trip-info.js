@@ -1,22 +1,23 @@
-import {createElement, getMomentMonthDayAsString, getMomentDayAsString} from "../utils.js";
+import {getMomentMonthDayAsString, getMomentDayAsString} from "../utils/event.js";
+import AbstractView from "./abstract.js";
 
 
-const createTripInfoTemplate = (routeEvents) => {
+const createTripInfoTemplate = (tripEvents) => {
   let destinationString = ``;
   let datesString = ``;
 
-  if (routeEvents.length > 0) {
-    const firstDestination = routeEvents[0].destination.name;
-    const lastDestination = routeEvents[routeEvents.length - 1].destination.name;
+  if (tripEvents.length > 0) {
+    const firstDestination = tripEvents[0].destination.name;
+    const lastDestination = tripEvents[tripEvents.length - 1].destination.name;
 
-    const middleDestination = routeEvents.length === 3
-      ? routeEvents[1].destination.name
+    const middleDestination = tripEvents.length === 3
+      ? tripEvents[1].destination.name
       : `...`;
 
     destinationString = `              <h1 class="trip-info__title">${firstDestination} &mdash; ${middleDestination} &mdash; ${lastDestination}</h1>`;
 
-    const firstMoment = routeEvents[0].startMoment;
-    const lastMoment = routeEvents[routeEvents.length - 1].startMoment;
+    const firstMoment = tripEvents[0].startMoment;
+    const lastMoment = tripEvents[tripEvents.length - 1].startMoment;
 
     const start = getMomentMonthDayAsString(firstMoment);
 
@@ -29,8 +30,8 @@ const createTripInfoTemplate = (routeEvents) => {
 
   let totalPrice = 0;
   // Посчитаем полную стоимость поездки
-  for (const routeEvent of routeEvents) {
-    const {eventType, price: eventPrice} = routeEvent;
+  for (const tripEvent of tripEvents) {
+    const {eventType, price: eventPrice} = tripEvent;
 
     let subTotal = 0;
 
@@ -64,23 +65,13 @@ const createTripInfoTemplate = (routeEvents) => {
 };
 
 
-export default class TripInfoView {
-  constructor(routeEvents) {
-    this._routeEvents = routeEvents;
-    this._element = createElement(this.getTemplate());
-    // console.log(this.getTemplate());
-    // console.log(this._element);
+export default class TripInfoView extends AbstractView {
+  constructor(tripEvents) {
+    super();
+    this._tripEvents = tripEvents;
   }
 
   getTemplate() {
-    return createTripInfoTemplate(this._routeEvents);
-  }
-
-  getElement() {
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+    return createTripInfoTemplate(this._tripEvents);
   }
 }

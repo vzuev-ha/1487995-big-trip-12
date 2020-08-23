@@ -1,7 +1,8 @@
-import {createElement, getMomentTimeAsString, getMomentISOFormat, getTimeBetween} from "../utils.js";
+import {getMomentTimeAsString, getMomentISOFormat, getTimeBetween} from "../utils/event.js";
+import AbstractView from "./abstract.js";
 
-const createEventTemplate = (routeEvent) => {
-  const {eventType, destination, startMoment, endMoment, price} = routeEvent;
+const createEventTemplate = (tripEvent) => {
+  const {eventType, destination, startMoment, endMoment, price} = tripEvent;
 
   const {
     name: eventName,
@@ -63,21 +64,38 @@ const createEventTemplate = (routeEvent) => {
 };
 
 
-export default class EventView {
-  constructor(routeEvent) {
-    this._routeEvent = routeEvent;
-    this._element = createElement(this.getTemplate());
+export default class EventView extends AbstractView {
+  constructor(tripEvent) {
+    super();
+    this._tripEvent = tripEvent;
+
+    // 4. Теперь обработчик - метод класса, а не стрелочная функция.
+    // Поэтому при передаче в addEventListener он теряет контекст (this),
+    // а с контекстом - доступ к свойствам и методам.
+    // Чтобы такого не происходило, нужно насильно
+    // привязать обработчик к контексту с помощью bind
+    this._editClickHandler = this._editClickHandler.bind(this);
   }
 
   getTemplate() {
-    return createEventTemplate(this._routeEvent);
+    return createEventTemplate(this._tripEvent);
   }
 
-  getElement() {
-    return this._element;
+  _editClickHandler(evt) {
+    evt.preventDefault();
+    // 3. А внутри абстрактного обработчика вызовем колбэк
+    this._callback.editClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setEditClickHandler(callback) {
+    // Мы могли бы сразу передать callback в addEventListener,
+    // но тогда бы для удаления обработчика в будущем,
+    // нам нужно было бы производить это снаружи, где-то там,
+    // где мы вызывали setClickHandler, что не всегда удобно
+
+    // 1. Поэтому колбэк мы запишем во внутреннее свойство
+    this._callback.editClick = callback;
+    // 2. В addEventListener передадим абстрактный обработчик
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._editClickHandler);
   }
 }
