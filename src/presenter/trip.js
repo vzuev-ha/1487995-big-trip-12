@@ -9,7 +9,16 @@ import EventView from "../view/event.js";
 import EditFormView from "../view/edit-form.js";
 
 import {render, RenderPosition, replace} from "../utils/render.js";
-import {veryOldMoment} from "../utils/event.js";
+import {
+  veryOldMoment,
+  SortType,
+  SortDirection,
+  sortEventsByDefault,
+  sortEventsByTimeAsc,
+  sortEventsByTimeDesc,
+  sortEventsByPriceAsc,
+  sortEventsByPriceDesc
+} from "../utils/event.js";
 import moment from "moment";
 
 
@@ -17,11 +26,15 @@ export default class TripPresenter {
   constructor() {
     // Найдем основной контейнер
     this._mainContainerElement = document.querySelector(`.trip-events`);
+    this._currentSortType = SortType.EVENT;
+    this._currentSortDirection = SortDirection.ASCENDING;
 
 
     this._sortComponent = new SortView();
     this._tripContainerComponent = new TripContainerView();
     this._noEventsComponent = new NoEventView();
+
+    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
 
@@ -32,8 +45,46 @@ export default class TripPresenter {
   }
 
 
+  _sortEvents(sortType) {
+    switch (sortType) {
+      case SortType.EVENT:
+        this._currentSortDirection = SortDirection.ASCENDING;
+        this._tripEvents.sort(sortEventsByDefault);
+        break;
+      case SortType.TIME:
+        if (this._currentSortType === sortType && this._currentSortDirection === SortDirection.ASCENDING) {
+          this._currentSortDirection = SortDirection.DESCENDING;
+          this._tripEvents.sort(sortEventsByTimeDesc);
+        } else {
+          this._currentSortDirection = SortDirection.ASCENDING;
+          this._tripEvents.sort(sortEventsByTimeAsc);
+        }
+        break;
+      case SortType.PRICE:
+        if (this._currentSortType === sortType && this._currentSortDirection === SortDirection.ASCENDING) {
+          this._currentSortDirection = SortDirection.DESCENDING;
+          this._tripEvents.sort(sortEventsByPriceDesc);
+        } else {
+          this._currentSortDirection = SortDirection.ASCENDING;
+          this._tripEvents.sort(sortEventsByPriceAsc);
+        }
+        break;
+    }
+
+    this._currentSortType = sortType;
+  }
+
+
+  _handleSortTypeChange(sortType) {
+    this._sortEvents(sortType);
+    // - Очищаем список
+    // - Рендерим список заново
+  }
+
+
   _renderSort() {
     render(this._mainContainerElement, this._sortComponent, RenderPosition.BEFOREEND);
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
 
