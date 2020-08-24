@@ -471,10 +471,12 @@ main {
               transform: translateY(-50%); }
 
 .trip-sort__direction-icon {
-  display: none;
   width: 8px;
   height: 10px;
   margin-left: 5px; }
+
+.trip-sort__direction-icon__hidden {
+  display: none; }
 
 .trip-sort__btn--by-decrease .trip-sort__direction-icon {
   -webkit-transform: rotate(180deg);

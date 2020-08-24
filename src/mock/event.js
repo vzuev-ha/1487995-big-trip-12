@@ -1,5 +1,4 @@
 import {getRandomInteger} from "../utils/common.js";
-import {getMomentSlashedFormat} from "../utils/event.js";
 import moment from 'moment';
 
 

@@ -30,7 +30,7 @@ export default class TripPresenter {
     this._currentSortDirection = SortDirection.ASCENDING;
 
 
-    this._sortComponent = new SortView();
+    this._sortComponent = null; // Будем пересоздавать его при рендеринге, а тут застолбим свойство класса
     this._tripContainerComponent = new TripContainerView();
     this._noEventsComponent = new NoEventView();
 
@@ -48,8 +48,10 @@ export default class TripPresenter {
   _sortEvents(sortType) {
     switch (sortType) {
       case SortType.EVENT:
-        this._currentSortDirection = SortDirection.ASCENDING;
-        this._tripEvents.sort(sortEventsByDefault);
+        if (this._currentSortType !== sortType) {
+          this._currentSortDirection = SortDirection.ASCENDING;
+          this._tripEvents.sort(sortEventsByDefault);
+        }
         break;
       case SortType.TIME:
         if (this._currentSortType === sortType && this._currentSortDirection === SortDirection.ASCENDING) {
@@ -77,12 +79,22 @@ export default class TripPresenter {
 
   _handleSortTypeChange(sortType) {
     this._sortEvents(sortType);
-    // - Очищаем список
-    // - Рендерим список заново
+
+    this._sortComponent.removeElement();
+    this._tripContainerComponent.removeElement();
+
+    this._renderSort(this._currentSortType, this._currentSortDirection);
+
+    if (this._currentSortType === SortType.EVENT) {
+      this._renderTripContainerGrouped();
+    } else {
+      this._renderTripContainerSorted();
+    }
   }
 
 
-  _renderSort() {
+  _renderSort(sortType, sortDirection) {
+    this._sortComponent = new SortView(sortType, sortDirection);
     render(this._mainContainerElement, this._sortComponent, RenderPosition.BEFOREEND);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
@@ -128,7 +140,7 @@ export default class TripPresenter {
   }
 
 
-  _renderTripContainer() {
+  _renderTripContainerGrouped() {
     render(this._mainContainerElement, this._tripContainerComponent, RenderPosition.BEFOREEND);
 
     // Это уже не нужно искать, так как _tripContainerComponent содержит единственный элемент без детей
@@ -163,8 +175,30 @@ export default class TripPresenter {
         dayIndex++;
       }
 
+      // Вставляем точку маршрута
       this._renderTripEvent(dayEventsContainerElement, this._tripEvents[i]);
     }
+  }
+
+
+  _renderTripContainerSorted() {
+    render(this._mainContainerElement, this._tripContainerComponent, RenderPosition.BEFOREEND);
+
+    // Вставляем блок дня - единственный, так как при сортировке нет группировки
+    render(this._tripContainerComponent, new DayView(null, null), RenderPosition.BEFOREEND);
+
+    // Контейнер точек дня
+    const days = this._tripContainerComponent.getElement().querySelectorAll(`.trip-days__item`);
+    const dayElement = days[days.length - 1];
+    render(dayElement, new DayEventsContainerView(), RenderPosition.BEFOREEND);
+
+    // Сюда будем вставлять точки
+    const dayEventsContainerElement = dayElement.querySelector(`.trip-events__list`);
+
+    // Перебираем точки маршрута, складывая в один контейнер дня
+    this._tripEvents.forEach((tripEvent) =>
+      this._renderTripEvent(dayEventsContainerElement, tripEvent)
+    );
   }
 
 
@@ -174,7 +208,7 @@ export default class TripPresenter {
       return;
     }
 
-    this._renderSort();
-    this._renderTripContainer();
+    this._renderSort(this._currentSortType, this._currentSortDirection);
+    this._renderTripContainerGrouped();
   }
 }
