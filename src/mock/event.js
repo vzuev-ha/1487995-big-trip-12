@@ -1,4 +1,5 @@
 import {getRandomInteger} from "../utils/common.js";
+import {getMomentSlashedFormat} from "../utils/event.js";
 import moment from 'moment';
 
 
@@ -198,8 +199,8 @@ const generateStartMoment = () => {
 const generateEndMoment = (startMoment) => {
   return moment(startMoment)
     .add(getRandomInteger(0, 2), `days`)
-    .hours(getRandomInteger(0, 23))
-    .minutes(5 * getRandomInteger(0, 11));
+    .add(getRandomInteger(0, 23), `hours`)
+    .add(5 * getRandomInteger(0, 11), `minutes`);
 };
 
 
