@@ -5,10 +5,9 @@ import TripContainerView from "../view/trip-container.js";
 import DayView from "../view/day.js";
 import DayEventsContainerView from "../view/day-events-container.js";
 
-import EventView from "../view/event.js";
-import EditFormView from "../view/edit-form.js";
+import EventPresenter from "./event.js";
 
-import {render, RenderPosition, replace} from "../utils/render.js";
+import {render, RenderPosition} from "../utils/render.js";
 import {
   veryOldMoment,
   SortType,
@@ -106,37 +105,8 @@ export default class TripPresenter {
 
 
   _renderTripEvent(container, tripEvent) {
-    const eventComponent = new EventView(tripEvent);
-    const eventEditComponent = new EditFormView(tripEvent);
-
-    const replaceCardToForm = () => {
-      replace(eventEditComponent, eventComponent);
-    };
-
-    const replaceFormToCard = () => {
-      replace(eventComponent, eventEditComponent);
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        evt.preventDefault();
-        replaceFormToCard();
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    eventComponent.setEditClickHandler(() => {
-      replaceCardToForm();
-      document.addEventListener(`keydown`, onEscKeyDown);
-    });
-
-    eventEditComponent.setFormSubmitHandler(() => {
-      replaceFormToCard();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    });
-
-
-    render(container, eventComponent, RenderPosition.BEFOREEND);
+    const eventPresenter = new EventPresenter(container);
+    eventPresenter.init(tripEvent);
   }
 
 
