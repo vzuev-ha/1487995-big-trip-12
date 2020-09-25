@@ -5,13 +5,16 @@ import {render, RenderPosition, replace, remove} from "../utils/render.js";
 
 
 export default class EventPresenter {
-  constructor(eventsContainer) {
+  constructor(eventsContainer, changeData) {
     this._eventsContainer = eventsContainer;
+    this._changeData = changeData;
 
     this._eventComponent = null;
     this._eventEditComponent = null;
 
     this._handleEditClick = this._handleEditClick.bind(this);
+    this._handleCancelEditClick = this._handleCancelEditClick.bind(this);
+    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
@@ -27,6 +30,9 @@ export default class EventPresenter {
     this._eventEditComponent = new EditFormView(tripEvent);
 
     this._eventComponent.setEditClickHandler(this._handleEditClick);
+
+    this._eventEditComponent.setCancelEditClickHandler(this._handleCancelEditClick);
+    this._eventEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
@@ -36,11 +42,11 @@ export default class EventPresenter {
 
     // Проверка на наличие в DOM необходима,
     // чтобы не пытаться заменить то, что не было отрисовано
-    if (this._eventsContainer.getElement().contains(prevEventComponent.getElement())) {
+    if (this._eventsContainer.contains(prevEventComponent.getElement())) {
       replace(this._eventComponent, prevEventComponent);
     }
 
-    if (this._eventsContainer.getElement().contains(prevEventEditComponent.getElement())) {
+    if (this._eventsContainer.contains(prevEventEditComponent.getElement())) {
       replace(this._eventEditComponent, prevEventEditComponent);
     }
 
@@ -80,7 +86,26 @@ export default class EventPresenter {
   }
 
 
-  _handleFormSubmit() {
+  _handleCancelEditClick() {
+    this._replaceFormToCard();
+  }
+
+
+  _handleFavoriteClick() {
+    this._changeData(
+        Object.assign(
+            {},
+            this._tripEvent,
+            {
+              isFavorite: !this._tripEvent.isFavorite
+            }
+        )
+    );
+  }
+
+
+  _handleFormSubmit(tripEvent) {
+    this._changeData(tripEvent);
     this._replaceFormToCard();
   }
 }

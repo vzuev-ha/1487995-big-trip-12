@@ -77,15 +77,18 @@ export default class EventView extends AbstractView {
     this._editClickHandler = this._editClickHandler.bind(this);
   }
 
+
   getTemplate() {
     return createEventTemplate(this._tripEvent);
   }
+
 
   _editClickHandler(evt) {
     evt.preventDefault();
     // 3. А внутри абстрактного обработчика вызовем колбэк
     this._callback.editClick();
   }
+
 
   setEditClickHandler(callback) {
     // Мы могли бы сразу передать callback в addEventListener,
