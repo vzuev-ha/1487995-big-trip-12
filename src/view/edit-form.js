@@ -1,6 +1,6 @@
 import {getMomentSlashedFormat} from "../utils/event.js";
 import {getEventTypeByValue, generateDestination} from "../mock/event.js";
-import AbstractView from "./abstract.js";
+import SmartView from "./smart.js";
 import moment from 'moment';
 
 
@@ -249,7 +249,7 @@ const createEditFormTemplate = (data) => {
 };
 
 
-export default class EditFormView extends AbstractView {
+export default class EditFormView extends SmartView {
   constructor(tripEvent = BLANK_EVENT) {
     super();
     this._data = EditFormView.parseTaskToData(tripEvent);
@@ -276,39 +276,6 @@ export default class EditFormView extends AbstractView {
 
   getTemplate() {
     return createEditFormTemplate(this._data);
-  }
-
-
-  updateData(update, justDataUpdating) {
-    if (!update) {
-      return;
-    }
-
-    this._data = Object.assign(
-        {},
-        this._data,
-        update
-    );
-
-    if (justDataUpdating) {
-      return;
-    }
-
-    this.updateElement();
-  }
-
-
-  updateElement() {
-    let prevElement = this.getElement();
-    const parent = prevElement.parentElement;
-    this.removeElement();
-
-    const newElement = this.getElement();
-
-    parent.replaceChild(newElement, prevElement);
-    prevElement = null; // Чтобы окончательно "убить" ссылку на prevElement
-
-    this.restoreHandlers();
   }
 
 
