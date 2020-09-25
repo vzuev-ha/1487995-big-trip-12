@@ -259,6 +259,21 @@ export default class EditFormView extends AbstractView {
   }
 
 
+  updateData(update) {
+    if (!update) {
+      return;
+    }
+
+    this._data = Object.assign(
+        {},
+        this._data,
+        update
+    );
+
+    this.updateElement();
+  }
+
+
   updateElement() {
     let prevElement = this.getElement();
     const parent = prevElement.parentElement;
