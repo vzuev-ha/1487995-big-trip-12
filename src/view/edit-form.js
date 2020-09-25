@@ -124,37 +124,44 @@ const createEditFormTemplate = (data) => {
                     <legend class="visually-hidden">Transfer</legend>
 
                     <div class="event__type-item">
-                      <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi">
+                      <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio"
+                             name="event-type" value="taxi" ${eventValue === `taxi` ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
                     </div>
 
                     <div class="event__type-item">
-                      <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus">
+                      <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio"
+                             name="event-type" value="bus" ${eventValue === `bus` ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
                     </div>
 
                     <div class="event__type-item">
-                      <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train">
+                      <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio"
+                             name="event-type" value="train" ${eventValue === `train` ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
                     </div>
 
                     <div class="event__type-item">
-                      <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship">
+                      <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio"
+                             name="event-type" value="ship" ${eventValue === `ship` ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
                     </div>
 
                     <div class="event__type-item">
-                      <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport">
+                      <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio"
+                             name="event-type" value="transport" ${eventValue === `transport` ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--transport" for="event-type-transport-1">Transport</label>
                     </div>
 
                     <div class="event__type-item">
-                      <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive">
+                      <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio"
+                             name="event-type" value="drive" ${eventValue === `drive` ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
                     </div>
 
                     <div class="event__type-item">
-                      <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
+                      <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio"
+                             name="event-type" value="flight" ${eventValue === `flight` ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
                     </div>
                   </fieldset>
@@ -163,17 +170,20 @@ const createEditFormTemplate = (data) => {
                     <legend class="visually-hidden">Activity</legend>
 
                     <div class="event__type-item">
-                      <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in">
+                      <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio"
+                             name="event-type" value="check-in" ${eventValue === `check-in` ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
                     </div>
 
                     <div class="event__type-item">
-                      <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing">
+                      <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio"
+                             name="event-type" value="sightseeing" ${eventValue === `sightseeing` ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
                     </div>
 
                     <div class="event__type-item">
-                      <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant">
+                      <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio"
+                             name="event-type" value="restaurant" ${eventValue === `restaurant` ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
                     </div>
                   </fieldset>
@@ -252,15 +262,11 @@ export default class EditFormView extends AbstractView {
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._cancelEditClickHandler = this._cancelEditClickHandler.bind(this);
+
     this._typeSelectHandler = this._typeSelectHandler.bind(this);
     this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
 
-    this.getElement()
-      .querySelector(`.event__type-list`)
-      .addEventListener(`click`, this._typeSelectHandler);
-    this.getElement()
-      .querySelector(`.event__input--destination`)
-      .addEventListener(`change`, this._destinationChangeHandler);
+    this._setInnerHandlers();
   }
 
 
@@ -293,6 +299,26 @@ export default class EditFormView extends AbstractView {
 
     parent.replaceChild(newElement, prevElement);
     prevElement = null; // Чтобы окончательно "убить" ссылку на prevElement
+
+    this.restoreHandlers();
+  }
+
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setFavoriteClickHandler(this._callback.favoriteClick);
+    this.setCancelEditClickHandler(this._callback.cancelEditClick);
+  }
+
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelector(`.event__type-list`)
+      .addEventListener(`click`, this._typeSelectHandler);
+    this.getElement()
+      .querySelector(`.event__input--destination`)
+      .addEventListener(`change`, this._destinationChangeHandler);
   }
 
 
