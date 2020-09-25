@@ -260,6 +260,10 @@ export default class EditFormView extends AbstractView {
     // Чтобы такого не происходило, нужно насильно
     // привязать обработчик к контексту с помощью bind
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._startTimeChangeHandler = this._startTimeChangeHandler.bind(this);
+    this._endTimeChangeHandler = this._endTimeChangeHandler.bind(this);
+    this._priceChangeHandler = this._priceChangeHandler.bind(this);
+
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._cancelEditClickHandler = this._cancelEditClickHandler.bind(this);
 
@@ -275,7 +279,7 @@ export default class EditFormView extends AbstractView {
   }
 
 
-  updateData(update) {
+  updateData(update, justDataUpdating) {
     if (!update) {
       return;
     }
@@ -285,6 +289,10 @@ export default class EditFormView extends AbstractView {
         this._data,
         update
     );
+
+    if (justDataUpdating) {
+      return;
+    }
 
     this.updateElement();
   }
@@ -319,6 +327,16 @@ export default class EditFormView extends AbstractView {
     this.getElement()
       .querySelector(`.event__input--destination`)
       .addEventListener(`change`, this._destinationChangeHandler);
+
+    this.getElement()
+      .querySelector(`#event-start-time-1`)
+      .addEventListener(`change`, this._startTimeChangeHandler);
+    this.getElement()
+      .querySelector(`#event-end-time-1`)
+      .addEventListener(`change`, this._endTimeChangeHandler);
+    this.getElement()
+      .querySelector(`.event__input--price`)
+      .addEventListener(`change`, this._priceChangeHandler);
   }
 
 
@@ -342,6 +360,30 @@ export default class EditFormView extends AbstractView {
     this.updateData({
       destination: generateDestination(evt.target.value)
     });
+  }
+
+
+  _startTimeChangeHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      startMoment: moment(evt.target.value, `YY/MM/DD HH:mm`)
+    }, true);
+  }
+
+
+  _endTimeChangeHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      endMoment: moment(evt.target.value, `YY/MM/DD HH:mm`)
+    }, true);
+  }
+
+
+  _priceChangeHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      price: evt.target.value
+    }, true);
   }
 
 
