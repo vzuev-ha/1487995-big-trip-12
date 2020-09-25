@@ -1,4 +1,5 @@
 import {getMomentSlashedFormat} from "../utils/event.js";
+import {getEventTypeByValue, generateDestination} from "../mock/event.js";
 import AbstractView from "./abstract.js";
 import moment from 'moment';
 
@@ -251,6 +252,15 @@ export default class EditFormView extends AbstractView {
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._cancelEditClickHandler = this._cancelEditClickHandler.bind(this);
+    this._typeSelectHandler = this._typeSelectHandler.bind(this);
+    this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
+
+    this.getElement()
+      .querySelector(`.event__type-list`)
+      .addEventListener(`click`, this._typeSelectHandler);
+    this.getElement()
+      .querySelector(`.event__input--destination`)
+      .addEventListener(`change`, this._destinationChangeHandler);
   }
 
 
@@ -283,6 +293,29 @@ export default class EditFormView extends AbstractView {
 
     parent.replaceChild(newElement, prevElement);
     prevElement = null; // Чтобы окончательно "убить" ссылку на prevElement
+  }
+
+
+  _typeSelectHandler(evt) {
+    evt.preventDefault();
+    const eventTypeByValue = getEventTypeByValue(evt.target.previousElementSibling.value);
+
+    if (typeof eventTypeByValue === `undefined`) {
+      return;
+    }
+
+    this.updateData({
+      eventType: eventTypeByValue
+    });
+  }
+
+
+  _destinationChangeHandler(evt) {
+    evt.preventDefault();
+
+    this.updateData({
+      destination: generateDestination(evt.target.value)
+    });
   }
 
 
