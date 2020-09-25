@@ -6,6 +6,7 @@ import DayView from "../view/day.js";
 import DayEventsContainerView from "../view/day-events-container.js";
 
 import EventPresenter from "./event.js";
+import {updateItem} from "../utils/common.js";
 
 import {render, RenderPosition} from "../utils/render.js";
 import {
@@ -29,11 +30,11 @@ export default class TripPresenter {
     this._currentSortDirection = SortDirection.ASCENDING;
     this._eventPresentersList = {};
 
-
     this._sortComponent = null; // Будем пересоздавать его при рендеринге, а тут застолбим свойство класса
     this._tripContainerComponent = new TripContainerView();
     this._noEventsComponent = new NoEventView();
 
+    this._handleEventChange = this._handleEventChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
@@ -42,6 +43,12 @@ export default class TripPresenter {
     this._tripEvents = tripEvents.slice();
 
     this._renderTrip();
+  }
+
+
+  _handleEventChange(updatedEvent) {
+    this._tripEvents = updateItem(this._tripEvents, updatedEvent);
+    this._eventPresentersList[updatedEvent.id].init(updatedEvent);
   }
 
 
