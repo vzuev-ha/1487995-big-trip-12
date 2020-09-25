@@ -22,8 +22,8 @@ const BLANK_EVENT = {
 };
 
 
-const createEditFormTemplate = (tripEvent) => {
-  const {eventType, destination, startMoment, endMoment, price} = tripEvent;
+const createEditFormTemplate = (data) => {
+  const {eventType, destination, startMoment, endMoment, price, isFavorite} = data;
 
   const {
     name: eventName,
@@ -218,7 +218,8 @@ const createEditFormTemplate = (tripEvent) => {
               <input id="event-favorite-1"
                      class="event__favorite-checkbox  visually-hidden"
                      type="checkbox"
-                     name="event-favorite">
+                     name="event-favorite"
+                     ${isFavorite ? `checked` : ``}>
               <label class="event__favorite-btn" for="event-favorite-1">
                 <span class="visually-hidden">Add to favorite</span>
                 <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -238,9 +239,9 @@ const createEditFormTemplate = (tripEvent) => {
 
 
 export default class EditFormView extends AbstractView {
-  constructor(tripEvent) {
+  constructor(tripEvent = BLANK_EVENT) {
     super();
-    this._tripEvent = tripEvent || BLANK_EVENT;
+    this._data = EditFormView.parseTaskToData(tripEvent);
 
     // 4. Теперь обработчик - метод класса, а не стрелочная функция.
     // Поэтому при передаче в addEventListener он теряет контекст (this),
@@ -254,14 +255,14 @@ export default class EditFormView extends AbstractView {
 
 
   getTemplate() {
-    return createEditFormTemplate(this._tripEvent);
+    return createEditFormTemplate(this._data);
   }
 
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
     // 3. А внутри абстрактного обработчика вызовем колбэк
-    this._callback.formSubmit(this._tripEvent);
+    this._callback.formSubmit(EditFormView.parseDataToTask(this._data));
   }
 
 
@@ -307,5 +308,27 @@ export default class EditFormView extends AbstractView {
     this._callback.cancelEditClick = callback;
     // 2. В addEventListener передадим абстрактный обработчик
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._cancelEditClickHandler);
+  }
+
+
+  static parseTaskToData(tripEvent) {
+    // Пока нам это не нужно, но вдруг Избранное не будет атрибутом точки маршрута? Пока пусть будет.
+    return Object.assign(
+        {},
+        tripEvent // ,
+        // {
+        //   isFavorite: tripEvent.isFavorite !== null
+        // }
+    );
+  }
+
+
+  static parseDataToTask(data) {
+    data = Object.assign({}, data);
+
+    // Пока нам это не нужно, но вдруг Избранное не будет атрибутом точки маршрута? Пока пусть будет.
+    // delete data.isFavorite;
+
+    return data;
   }
 }
