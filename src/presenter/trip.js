@@ -27,6 +27,7 @@ export default class TripPresenter {
     this._mainContainerElement = document.querySelector(`.trip-events`);
     this._currentSortType = SortType.EVENT;
     this._currentSortDirection = SortDirection.ASCENDING;
+    this._eventPresentersList = {};
 
 
     this._sortComponent = null; // Будем пересоздавать его при рендеринге, а тут застолбим свойство класса
@@ -79,6 +80,7 @@ export default class TripPresenter {
   _handleSortTypeChange(sortType) {
     this._sortEvents(sortType);
 
+    this._clearTaskList();
     this._sortComponent.removeElement();
     this._tripContainerComponent.removeElement();
 
@@ -89,6 +91,14 @@ export default class TripPresenter {
     } else {
       this._renderTripContainerSorted();
     }
+  }
+
+
+  _clearTaskList() {
+    Object
+      .values(this._eventPresentersList)
+      .forEach((presenter) => presenter.destroy());
+    this._eventPresentersList = {};
   }
 
 
@@ -107,6 +117,7 @@ export default class TripPresenter {
   _renderTripEvent(container, tripEvent) {
     const eventPresenter = new EventPresenter(container);
     eventPresenter.init(tripEvent);
+    this._eventPresentersList[tripEvent.id] = eventPresenter;
   }
 
 
