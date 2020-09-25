@@ -274,6 +274,13 @@ export default class EditFormView extends SmartView {
   }
 
 
+  reset(tripEvent) {
+    this.updateData(
+        EditFormView.parseTaskToData(tripEvent)
+    );
+  }
+
+
   getTemplate() {
     return createEditFormTemplate(this._data);
   }
