@@ -256,6 +256,8 @@ export default class EditFormView extends SmartView {
   constructor(tripEvent = BLANK_EVENT) {
     super();
     this._data = EditFormView.parseTaskToData(tripEvent);
+    this._startTimePicker = null;
+    this._endTimePicker = null;
 
     // 4. Теперь обработчик - метод класса, а не стрелочная функция.
     // Поэтому при передаче в addEventListener он теряет контекст (this),
@@ -275,6 +277,8 @@ export default class EditFormView extends SmartView {
     this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
 
     this._setInnerHandlers();
+    this._setStartTimePicker();
+    this._setEndTimePicker();
   }
 
 
@@ -292,9 +296,60 @@ export default class EditFormView extends SmartView {
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this._setStartTimePicker();
+    this._setEndTimePicker();
+
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFavoriteClickHandler(this._callback.favoriteClick);
     this.setCancelEditClickHandler(this._callback.cancelEditClick);
+  }
+
+
+  _setStartTimePicker() {
+    if (this._startTimePicker) {
+      // В случае обновления компонента удаляем вспомогательные DOM-элементы,
+      // которые создает flatpickr при инициализации
+      this._startTimePicker.destroy();
+      this._startTimePicker = null;
+    }
+    if (this._data.startMoment) {
+      // flatpickr есть смысл инициализировать только в случае,
+      // если поле выбора даты доступно для заполнения
+      this._startTimePicker = flatpickr(
+        this.getElement().querySelector(`#event-start-time-1`),
+        {
+          enableTime: true,
+          time_24hr: true,
+          dateFormat: `y/m/d H:i`,
+          defaultDate: this._data.startMoment.toDate(),
+          onChange: this._startTimeChangeHandler // На событие flatpickr передаём наш колбэк
+        }
+      );
+    }
+  }
+
+
+  _setEndTimePicker() {
+    if (this._endTimePicker) {
+      // В случае обновления компонента удаляем вспомогательные DOM-элементы,
+      // которые создает flatpickr при инициализации
+      this._endTimePicker.destroy();
+      this._endTimePicker = null;
+    }
+    if (this._data.endMoment) {
+      // flatpickr есть смысл инициализировать только в случае,
+      // если поле выбора даты доступно для заполнения
+      this._endTimePicker = flatpickr(
+        this.getElement().querySelector(`#event-end-time-1`),
+        {
+          enableTime: true,
+          time_24hr: true,
+          dateFormat: `y/m/d H:i`,
+          defaultDate: this._data.endMoment.toDate(),
+          onChange: this._endTimeChangeHandler // На событие flatpickr передаём наш колбэк
+        }
+      );
+    }
   }
 
 
@@ -311,12 +366,6 @@ export default class EditFormView extends SmartView {
       offersElement.addEventListener(`click`, this._optionsSelectHandler);
     }
 
-    this.getElement()
-      .querySelector(`#event-start-time-1`)
-      .addEventListener(`change`, this._startTimeChangeHandler);
-    this.getElement()
-      .querySelector(`#event-end-time-1`)
-      .addEventListener(`change`, this._endTimeChangeHandler);
     this.getElement()
       .querySelector(`.event__input--price`)
       .addEventListener(`change`, this._priceChangeHandler);
@@ -385,19 +434,17 @@ export default class EditFormView extends SmartView {
   }
 
 
-  _startTimeChangeHandler(evt) {
-    evt.preventDefault();
+  _startTimeChangeHandler([userDate]) {
     this.updateData({
-      startMoment: moment(evt.target.value, `YY/MM/DD HH:mm`)
-    }, true);
+      startMoment: moment(userDate)
+    });
   }
 
 
-  _endTimeChangeHandler(evt) {
-    evt.preventDefault();
+  _endTimeChangeHandler([userDate]) {
     this.updateData({
-      endMoment: moment(evt.target.value, `YY/MM/DD HH:mm`)
-    }, true);
+      endMoment: moment(userDate)
+    });
   }
 
 
