@@ -23,7 +23,9 @@ import moment from "moment";
 
 
 export default class TripPresenter {
-  constructor() {
+  constructor(eventsModel) {
+    this._eventsModel = eventsModel;
+
     // Найдем основной контейнер
     this._mainContainerElement = document.querySelector(`.trip-events`);
     this._currentSortType = SortType.EVENT;
@@ -44,6 +46,11 @@ export default class TripPresenter {
     this._tripEvents = tripEvents.slice();
 
     this._renderTrip();
+  }
+
+
+  _getEvents() {
+    return this._eventsModel.getEvents();
   }
 
 
