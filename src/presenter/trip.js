@@ -7,16 +7,21 @@ import DayEventsContainerView from "../view/day-events-container.js";
 
 import EventPresenter from "./event.js";
 
-import {render, RenderPosition} from "../utils/render.js";
+import {render} from "../utils/render.js";
+import moment from "moment";
+
 import {
   veryOldMoment,
   SortType,
   SortDirection,
+  RenderPosition
+} from "../const.js";
+
+import {
   sortEventsByDefault,
   sortEventsByTime,
   sortEventsByPrice
 } from "../utils/event.js";
-import moment from "moment";
 
 
 export default class TripPresenter {
@@ -34,9 +39,12 @@ export default class TripPresenter {
     this._tripContainerComponent = new TripContainerView();
     this._noEventsComponent = new NoEventView();
 
-    this._handleEventChange = this._handleEventChange.bind(this);
+    this._handleViewAction = this._handleViewAction.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+
+    this._eventsModel.addObserver(this._handleModelEvent);
   }
 
 
@@ -65,9 +73,21 @@ export default class TripPresenter {
   }
 
 
-  _handleEventChange(updatedEvent) {
-    // Здесь будем вызывать обновление модели
-    this._eventPresentersList[updatedEvent.id].init(updatedEvent);
+  _handleViewAction(actionType, updateType, update) {
+    console.log(actionType, updateType, update);
+    // Здесь будем вызывать обновление модели.
+    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
+    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
+    // update - обновленные данные
+  }
+
+
+  _handleModelEvent(updateType, data) {
+    console.log(updateType, data);
+    // В зависимости от типа изменений решаем, что делать:
+    // - обновить часть списка (например, когда поменялось описание)
+    // - обновить список (например, когда задача ушла в архив)
+    // - обновить всю доску (например, при переключении фильтра)
   }
 
 
@@ -126,7 +146,7 @@ export default class TripPresenter {
 
 
   _renderTripEvent(container, tripEvent) {
-    const eventPresenter = new EventPresenter(container, this._handleEventChange, this._handleModeChange);
+    const eventPresenter = new EventPresenter(container, this._handleViewAction, this._handleModeChange);
     eventPresenter.init(tripEvent);
     this._eventPresentersList[tripEvent.id] = eventPresenter;
   }

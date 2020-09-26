@@ -1,6 +1,6 @@
 import EventView from "../view/event.js";
 import EditFormView from "../view/edit-form.js";
-import {WorkMode, RenderPosition} from "../const.js";
+import {WorkMode, RenderPosition, UserAction, UpdateType} from "../const.js";
 
 import {render, replace, remove} from "../utils/render.js";
 
@@ -106,6 +106,8 @@ export default class EventPresenter {
 
   _handleFavoriteClick() {
     this._changeData(
+        UserAction.UPDATE_EVENT,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._tripEvent,
@@ -118,7 +120,11 @@ export default class EventPresenter {
 
 
   _handleFormSubmit(tripEvent) {
-    this._changeData(tripEvent);
+    this._changeData(
+        UserAction.UPDATE_EVENT,
+        UpdateType.MINOR,
+        tripEvent
+    );
     this._replaceFormToCard();
   }
 }
