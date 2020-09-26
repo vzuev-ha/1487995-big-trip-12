@@ -1,29 +1,12 @@
 import {getMomentSlashedFormat} from "../utils/event.js";
 import {getEventTypeByValue, generateDestination} from "../mock/event.js";
+import {BLANK_EVENT} from "../const.js";
+
 import SmartView from "./smart.js";
 import moment from 'moment';
 
 import flatpickr from "flatpickr";
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
-
-
-const BLANK_EVENT = {
-  eventType: {
-    name: `Flignt`,
-    value: `flight`,
-    preposition: `to`,
-    eventOffers: []
-  },
-  destination: {
-    name: ``,
-    description: ``,
-    photos: []
-  },
-  startMoment: moment(),
-  endMoment: moment(),
-  price: ``,
-  isFavorite: false
-};
 
 
 const createEditFormTemplate = (data) => {

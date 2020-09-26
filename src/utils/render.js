@@ -1,11 +1,6 @@
 import Abstract from "../view/abstract.js";
+import {RenderPosition} from "../const.js";
 
-
-export const RenderPosition = {
-  AFTERBEGIN: `afterbegin`,
-  AFTEREND: `afterend`,
-  BEFOREEND: `beforeend`
-};
 
 export const render = (container, child, place) => {
   if (container instanceof Abstract) {

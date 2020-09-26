@@ -1,18 +1,5 @@
 import moment from 'moment';
-
-
-export const veryOldMoment = moment(`19800101`, `YYYYMMDD`);
-
-export const SortType = {
-  EVENT: `event`,
-  TIME: `time`,
-  PRICE: `price`
-};
-
-export const SortDirection = {
-  ASCENDING: `ascending`,
-  DESCENDING: `descending`
-};
+import {SortDirection} from "../const.js";
 
 
 export const getMomentTimeAsString = (inputMoment) => {
