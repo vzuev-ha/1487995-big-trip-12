@@ -61,24 +61,21 @@ export const sortEventsByDefault = (eventA, eventB) => {
   return eventA.startMoment.diff(eventB.startMoment);
 };
 
-export const sortEventsByTimeAsc = (eventA, eventB) => {
+export const sortEventsByTime = (sortDirection) => (eventA, eventB) => {
   const a = moment(eventA.endMoment).diff(eventA.startMoment);
   const b = moment(eventB.endMoment).diff(eventB.startMoment);
 
-  return a - b;
-};
-
-export const sortEventsByTimeDesc = (eventA, eventB) => {
-  const a = moment(eventA.endMoment).diff(eventA.startMoment);
-  const b = moment(eventB.endMoment).diff(eventB.startMoment);
+  if (sortDirection === SortDirection.ASCENDING) {
+    return a - b;
+  }
 
   return b - a;
 };
 
-export const sortEventsByPriceAsc = (eventA, eventB) => {
-  return eventA.price - eventB.price;
-};
+export const sortEventsByPrice = (sortDirection) => (eventA, eventB) => {
+  if (sortDirection === SortDirection.ASCENDING) {
+    return eventA.price - eventB.price;
+  }
 
-export const sortEventsByPriceDesc = (eventA, eventB) => {
   return eventB.price - eventA.price;
 };

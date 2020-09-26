@@ -14,10 +14,8 @@ import {
   SortType,
   SortDirection,
   sortEventsByDefault,
-  sortEventsByTimeAsc,
-  sortEventsByTimeDesc,
-  sortEventsByPriceAsc,
-  sortEventsByPriceDesc
+  sortEventsByTime,
+  sortEventsByPrice
 } from "../utils/event.js";
 import moment from "moment";
 
@@ -67,31 +65,29 @@ export default class TripPresenter {
   }
 
 
+  _toggleSortTypeAndDirection(sortType) {
+    if (this._currentSortType === sortType && this._currentSortDirection === SortDirection.ASCENDING) {
+      this._currentSortDirection = SortDirection.DESCENDING;
+    } else {
+      // Здесь же отработает условие первого клика по новой сортировке:
+      //   if (this._currentSortType !== sortType)
+      this._currentSortDirection = SortDirection.ASCENDING;
+    }
+  }
+
+
   _sortEvents(sortType) {
+    this._toggleSortTypeAndDirection(sortType);
+
     switch (sortType) {
       case SortType.EVENT:
-        if (this._currentSortType !== sortType) {
-          this._currentSortDirection = SortDirection.ASCENDING;
-          this._tripEvents.sort(sortEventsByDefault);
-        }
+        this._tripEvents.sort(sortEventsByDefault);
         break;
       case SortType.TIME:
-        if (this._currentSortType === sortType && this._currentSortDirection === SortDirection.ASCENDING) {
-          this._currentSortDirection = SortDirection.DESCENDING;
-          this._tripEvents.sort(sortEventsByTimeDesc);
-        } else {
-          this._currentSortDirection = SortDirection.ASCENDING;
-          this._tripEvents.sort(sortEventsByTimeAsc);
-        }
+        this._tripEvents.sort(sortEventsByTime(this._currentSortDirection));
         break;
       case SortType.PRICE:
-        if (this._currentSortType === sortType && this._currentSortDirection === SortDirection.ASCENDING) {
-          this._currentSortDirection = SortDirection.DESCENDING;
-          this._tripEvents.sort(sortEventsByPriceDesc);
-        } else {
-          this._currentSortDirection = SortDirection.ASCENDING;
-          this._tripEvents.sort(sortEventsByPriceAsc);
-        }
+        this._tripEvents.sort(sortEventsByPrice(this._currentSortDirection));
         break;
     }
 
@@ -102,8 +98,10 @@ export default class TripPresenter {
   _handleSortTypeChange(sortType) {
     this._sortEvents(sortType);
 
-    this._clearTaskList();
+    this._clearEventPresentersList();
+    this._sortComponent.getElement().remove();
     this._sortComponent.removeElement();
+    this._tripContainerComponent.getElement().remove();
     this._tripContainerComponent.removeElement();
 
     this._renderSort(this._currentSortType, this._currentSortDirection);
@@ -116,7 +114,7 @@ export default class TripPresenter {
   }
 
 
-  _clearTaskList() {
+  _clearEventPresentersList() {
     Object
       .values(this._eventPresentersList)
       .forEach((presenter) => presenter.destroy());
