@@ -1,5 +1,5 @@
 import AbstractView from "./abstract.js";
-import {SortType, SortDirection} from "../utils/event.js";
+import {SortType, SortDirection} from "../const.js";
 
 
 const createSortTemplate = (paramSortType, paramSortDirection) => {

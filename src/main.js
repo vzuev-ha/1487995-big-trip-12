@@ -5,7 +5,8 @@ import TripPresenter from "./presenter/trip.js";
 import EventsModel from "./model/events.js";
 
 import {generateEvent} from "./mock/event.js";
-import {render, RenderPosition} from "./utils/render.js";
+import {render} from "./utils/render.js";
+import {RenderPosition} from "./const.js";
 
 
 const EVENT_COUNT = 20;
