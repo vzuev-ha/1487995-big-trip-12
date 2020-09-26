@@ -36,7 +36,7 @@ render(headerTripControls[0], new SiteMenuView(), RenderPosition.AFTEREND);
 const filterPresenter = new FilterPresenter(headerTripControls[1], filterModel, eventsModel);
 
 // Основной контейнер с точками маршрута
-const tripPresenter = new TripPresenter(eventsModel);
+const tripPresenter = new TripPresenter(eventsModel, filterModel);
 
 filterPresenter.init();
 tripPresenter.init();

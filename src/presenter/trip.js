@@ -6,6 +6,7 @@ import DayView from "../view/day.js";
 import DayEventsContainerView from "../view/day-events-container.js";
 
 import EventPresenter from "./event.js";
+import {filter} from "../utils/filter.js";
 
 import {remove, render} from "../utils/render.js";
 import moment from "moment";
@@ -27,8 +28,9 @@ import {
 
 
 export default class TripPresenter {
-  constructor(eventsModel) {
+  constructor(eventsModel, filterModel) {
     this._eventsModel = eventsModel;
+    this._filterModel = filterModel;
 
     // Найдем основной контейнер
     this._mainContainerElement = document.querySelector(`.trip-events`);
@@ -47,6 +49,7 @@ export default class TripPresenter {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
     this._eventsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
   }
 
 
@@ -56,15 +59,19 @@ export default class TripPresenter {
 
 
   _getEvents() {
+    const filterType = this._filterModel.getFilter();
+    const tripEvents = this._eventsModel.getEvents();
+    const filtredTasks = filter[filterType](tripEvents);
+
     switch (this._currentSortType) {
       case SortType.TIME:
-        return this._eventsModel.getEvents().slice().sort(sortEventsByTime(this._currentSortDirection));
+        return filtredTasks.sort(sortEventsByTime(this._currentSortDirection));
       case SortType.PRICE:
-        return this._eventsModel.getEvents().slice().sort(sortEventsByPrice(this._currentSortDirection));
+        return filtredTasks.sort(sortEventsByPrice(this._currentSortDirection));
     }
 
     // case SortType.EVENT:
-    return this._eventsModel.getEvents().slice().sort(sortEventsByDefault);
+    return filtredTasks.sort(sortEventsByDefault);
   }
 
 
