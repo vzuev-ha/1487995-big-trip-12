@@ -20,6 +20,13 @@ eventsModel.setEvents(tripEventsArray);
 
 const filterModel = new FilterModel();
 
+// const filters = [
+//   {
+//     type: `everything`,
+//     name: `EVERYTHING`
+//   }
+// ];
+
 
 const headerTripInfoElement = document.querySelector(`.trip-main`);
 const headerTripControls = headerTripInfoElement
@@ -33,7 +40,7 @@ render(headerTripInfoElement, new TripInfoView(tripEventsArray), RenderPosition.
 // Меню
 render(headerTripControls[0], new SiteMenuView(), RenderPosition.AFTEREND);
 // Фильтры
-render(headerTripControls[1], new FiltersView(), RenderPosition.AFTEREND);
+render(headerTripControls[1], new FiltersView(`everything`), RenderPosition.AFTEREND);
 
 // Основной контейнер с точками маршрута
 const tripPresenter = new TripPresenter(eventsModel);

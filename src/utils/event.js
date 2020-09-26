@@ -53,6 +53,16 @@ export const isDatesOfMomentsEqual = (momentA, momentB) => {
 };
 
 
+export const isMomentInTheFuture = (momentA) => {
+  return momentA.isAfter(moment());
+}
+
+
+export const isMomentInThePast = (momentA) => {
+  return momentA.isBefore(moment());
+}
+
+
 export const sortEventsByDefault = (eventA, eventB) => {
   return eventA.startMoment.diff(eventB.startMoment);
 };
