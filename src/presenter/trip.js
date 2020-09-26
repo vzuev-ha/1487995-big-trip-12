@@ -7,7 +7,7 @@ import DayEventsContainerView from "../view/day-events-container.js";
 
 import EventPresenter from "./event.js";
 
-import {render} from "../utils/render.js";
+import {remove, render} from "../utils/render.js";
 import moment from "moment";
 
 import {
@@ -37,7 +37,7 @@ export default class TripPresenter {
     this._currentSortDirection = SortDirection.ASCENDING;
     this._eventPresentersList = {};
 
-    this._sortComponent = null; // Будем пересоздавать его при рендеринге, а тут застолбим свойство класса
+    this._sortComponent = null;
     this._tripContainerComponent = new TripContainerView();
     this._noEventsComponent = new NoEventView();
 
@@ -98,9 +98,6 @@ export default class TripPresenter {
   _handleModelEvent(updateType, data) {
     console.log(updateType, data);
     // В зависимости от типа изменений решаем, что делать:
-    // - обновить часть списка (например, когда поменялось описание)
-    // - обновить список (например, когда задача ушла в архив)
-    // - обновить всю доску (например, при переключении фильтра)
     switch (updateType) {
       case UpdateType.PATCH:
         // - обновить часть списка (например, когда поменялось описание)
@@ -108,9 +105,13 @@ export default class TripPresenter {
         break;
       case UpdateType.MINOR:
         // - обновить список (например, когда задача ушла в архив)
+        this._clearTrip();
+        this._renderTrip();
         break;
       case UpdateType.MAJOR:
         // - обновить всю доску (например, при переключении фильтра)
+        this._clearTrip({resetSortType: true});
+        this._renderTrip();
         break;
     }
   }
@@ -130,38 +131,40 @@ export default class TripPresenter {
 
 
   _handleSortTypeChange(sortType) {
-    // this._sortEvents(sortType);
     this._currentSortType = sortType;
     this._toggleSortDirection();
 
-    this._clearEventPresentersList();
-    this._sortComponent.getElement().remove();
-    this._sortComponent.removeElement();
-    this._tripContainerComponent.getElement().remove();
-    this._tripContainerComponent.removeElement();
+    this._clearTrip();
 
-    this._renderSort(this._currentSortType, this._currentSortDirection);
-
-    if (this._currentSortType === SortType.EVENT) {
-      this._renderTripContainerGrouped();
-    } else {
-      this._renderTripContainerSorted();
-    }
+    this._renderTrip();
   }
 
 
-  _clearEventPresentersList() {
+  _clearTrip({resetSortType = false} = {}) {
     Object
       .values(this._eventPresentersList)
       .forEach((presenter) => presenter.destroy());
     this._eventPresentersList = {};
+
+    remove(this._sortComponent);
+    remove(this._tripContainerComponent);
+    remove(this._noEventsComponent);
+
+    if (resetSortType) {
+      this._currentSortType = SortType.EVENT;
+    }
   }
 
 
-  _renderSort(sortType, sortDirection) {
-    this._sortComponent = new SortView(sortType, sortDirection);
-    render(this._mainContainerElement, this._sortComponent, RenderPosition.BEFOREEND);
+  _renderSort() {
+    if (this._sortComponent !== null) {
+      this._sortComponent = null;
+    }
+
+    this._sortComponent = new SortView(this._currentSortType, this._currentSortDirection);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+
+    render(this._mainContainerElement, this._sortComponent, RenderPosition.BEFOREEND);
   }
 
 
@@ -247,6 +250,11 @@ export default class TripPresenter {
     }
 
     this._renderSort(this._currentSortType, this._currentSortDirection);
-    this._renderTripContainerGrouped();
+
+    if (this._currentSortType === SortType.EVENT) {
+      this._renderTripContainerGrouped();
+    } else {
+      this._renderTripContainerSorted();
+    }
   }
 }

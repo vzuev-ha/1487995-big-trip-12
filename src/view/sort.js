@@ -49,17 +49,17 @@ const createSortTemplate = (paramSortType, paramSortDirection) => {
 
 
 export default class SortView extends AbstractView {
-  constructor(sortType, sortDirection) {
+  constructor(currentSortType, currentSortDirection) {
     super();
 
-    this._sortType = sortType;
-    this._sortDirection = sortDirection;
+    this._currentSortType = currentSortType;
+    this._currentSortDirection = currentSortDirection;
 
     this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
   }
 
   getTemplate() {
-    return createSortTemplate(this._sortType, this._sortDirection);
+    return createSortTemplate(this._currentSortType, this._currentSortDirection);
   }
 
   _sortTypeChangeHandler(evt) {
