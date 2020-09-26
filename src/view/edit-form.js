@@ -268,6 +268,7 @@ export default class EditFormView extends SmartView {
     this._cancelEditClickHandler = this._cancelEditClickHandler.bind(this);
 
     this._typeSelectHandler = this._typeSelectHandler.bind(this);
+    this._optionsSelectHandler = this._optionsSelectHandler.bind(this);
     this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
 
     this._setInnerHandlers();
@@ -302,6 +303,11 @@ export default class EditFormView extends SmartView {
       .querySelector(`.event__input--destination`)
       .addEventListener(`change`, this._destinationChangeHandler);
 
+    const offersElement = this.getElement().querySelector(`.event__available-offers`);
+    if (offersElement) {
+      offersElement.addEventListener(`click`, this._optionsSelectHandler);
+    }
+
     this.getElement()
       .querySelector(`#event-start-time-1`)
       .addEventListener(`change`, this._startTimeChangeHandler);
@@ -325,6 +331,45 @@ export default class EditFormView extends SmartView {
     this.updateData({
       eventType: eventTypeByValue
     });
+  }
+
+
+  _optionsSelectHandler(evt) {
+    // evt.preventDefault();
+
+    // Так как обработчик мы привязали делегированием ко всей секции,
+    //   сюда может прийти и label, и span, и div. Для span нужно взять родителя
+    let clickTarget;
+    if (evt.target.tagName === `LABEL`) {
+      clickTarget = evt.target;
+    } else if (evt.target.parentElement.tagName === `LABEL`) {
+      clickTarget = evt.target.parentElement;
+    } else {
+      return;
+    }
+
+    const {eventType} = this._data;
+    const {eventOffers} = eventType;
+
+    const newEventOffers = eventOffers.map(({offer, price, isSelected}) => {
+      return {
+        offer,
+        price,
+        isSelected: `event-offer-` + offer.value === clickTarget.control.name
+          ? !clickTarget.control.checked
+          : isSelected
+      };
+    });
+
+    const newEventType = Object.assign(
+        {},
+        eventType,
+        {eventOffers: newEventOffers}
+    );
+
+    this.updateData({
+      eventType: newEventType
+    }, true);
   }
 
 
