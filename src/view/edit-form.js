@@ -1,5 +1,6 @@
 import {getMomentSlashedFormat} from "../utils/event.js";
-import AbstractView from "./abstract.js";
+import {getEventTypeByValue, generateDestination} from "../mock/event.js";
+import SmartView from "./smart.js";
 import moment from 'moment';
 
 
@@ -22,8 +23,8 @@ const BLANK_EVENT = {
 };
 
 
-const createEditFormTemplate = (tripEvent) => {
-  const {eventType, destination, startMoment, endMoment, price} = tripEvent;
+const createEditFormTemplate = (data) => {
+  const {eventType, destination, startMoment, endMoment, price, isFavorite} = data;
 
   const {
     name: eventName,
@@ -123,37 +124,44 @@ const createEditFormTemplate = (tripEvent) => {
                     <legend class="visually-hidden">Transfer</legend>
 
                     <div class="event__type-item">
-                      <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi">
+                      <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio"
+                             name="event-type" value="taxi" ${eventValue === `taxi` ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
                     </div>
 
                     <div class="event__type-item">
-                      <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus">
+                      <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio"
+                             name="event-type" value="bus" ${eventValue === `bus` ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
                     </div>
 
                     <div class="event__type-item">
-                      <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train">
+                      <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio"
+                             name="event-type" value="train" ${eventValue === `train` ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
                     </div>
 
                     <div class="event__type-item">
-                      <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship">
+                      <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio"
+                             name="event-type" value="ship" ${eventValue === `ship` ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
                     </div>
 
                     <div class="event__type-item">
-                      <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport">
+                      <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio"
+                             name="event-type" value="transport" ${eventValue === `transport` ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--transport" for="event-type-transport-1">Transport</label>
                     </div>
 
                     <div class="event__type-item">
-                      <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive">
+                      <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio"
+                             name="event-type" value="drive" ${eventValue === `drive` ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
                     </div>
 
                     <div class="event__type-item">
-                      <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
+                      <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio"
+                             name="event-type" value="flight" ${eventValue === `flight` ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
                     </div>
                   </fieldset>
@@ -162,17 +170,20 @@ const createEditFormTemplate = (tripEvent) => {
                     <legend class="visually-hidden">Activity</legend>
 
                     <div class="event__type-item">
-                      <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in">
+                      <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio"
+                             name="event-type" value="check-in" ${eventValue === `check-in` ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
                     </div>
 
                     <div class="event__type-item">
-                      <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing">
+                      <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio"
+                             name="event-type" value="sightseeing" ${eventValue === `sightseeing` ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
                     </div>
 
                     <div class="event__type-item">
-                      <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant">
+                      <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio"
+                             name="event-type" value="restaurant" ${eventValue === `restaurant` ? `checked` : ``}>
                       <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
                     </div>
                   </fieldset>
@@ -214,6 +225,22 @@ const createEditFormTemplate = (tripEvent) => {
 
               <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
               <button class="event__reset-btn" type="reset">Cancel</button>
+
+              <input id="event-favorite-1"
+                     class="event__favorite-checkbox  visually-hidden"
+                     type="checkbox"
+                     name="event-favorite"
+                     ${isFavorite ? `checked` : ``}>
+              <label class="event__favorite-btn" for="event-favorite-1">
+                <span class="visually-hidden">Add to favorite</span>
+                <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
+                  <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
+                </svg>
+              </label>
+
+              <button class="event__rollup-btn" type="button">
+                <span class="visually-hidden">Open event</span>
+              </button>
             </header>
 
             ${detailsHTML}
@@ -222,10 +249,10 @@ const createEditFormTemplate = (tripEvent) => {
 };
 
 
-export default class EditFormView extends AbstractView {
-  constructor(tripEvent) {
+export default class EditFormView extends SmartView {
+  constructor(tripEvent = BLANK_EVENT) {
     super();
-    this._tripEvent = tripEvent || BLANK_EVENT;
+    this._data = EditFormView.parseTaskToData(tripEvent);
 
     // 4. Теперь обработчик - метод класса, а не стрелочная функция.
     // Поэтому при передаче в addEventListener он теряет контекст (this),
@@ -233,17 +260,171 @@ export default class EditFormView extends AbstractView {
     // Чтобы такого не происходило, нужно насильно
     // привязать обработчик к контексту с помощью bind
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._startTimeChangeHandler = this._startTimeChangeHandler.bind(this);
+    this._endTimeChangeHandler = this._endTimeChangeHandler.bind(this);
+    this._priceChangeHandler = this._priceChangeHandler.bind(this);
+
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._cancelEditClickHandler = this._cancelEditClickHandler.bind(this);
+
+    this._typeSelectHandler = this._typeSelectHandler.bind(this);
+    this._optionsSelectHandler = this._optionsSelectHandler.bind(this);
+    this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
+
+    this._setInnerHandlers();
   }
 
-  getTemplate() {
-    return createEditFormTemplate(this._tripEvent);
+
+  reset(tripEvent) {
+    this.updateData(
+        EditFormView.parseTaskToData(tripEvent)
+    );
   }
+
+
+  getTemplate() {
+    return createEditFormTemplate(this._data);
+  }
+
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setFavoriteClickHandler(this._callback.favoriteClick);
+    this.setCancelEditClickHandler(this._callback.cancelEditClick);
+  }
+
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelector(`.event__type-list`)
+      .addEventListener(`click`, this._typeSelectHandler);
+    this.getElement()
+      .querySelector(`.event__input--destination`)
+      .addEventListener(`change`, this._destinationChangeHandler);
+
+    const offersElement = this.getElement().querySelector(`.event__available-offers`);
+    if (offersElement) {
+      offersElement.addEventListener(`click`, this._optionsSelectHandler);
+    }
+
+    this.getElement()
+      .querySelector(`#event-start-time-1`)
+      .addEventListener(`change`, this._startTimeChangeHandler);
+    this.getElement()
+      .querySelector(`#event-end-time-1`)
+      .addEventListener(`change`, this._endTimeChangeHandler);
+    this.getElement()
+      .querySelector(`.event__input--price`)
+      .addEventListener(`change`, this._priceChangeHandler);
+  }
+
+
+  _typeSelectHandler(evt) {
+    evt.preventDefault();
+    const eventTypeByValue = getEventTypeByValue(evt.target.previousElementSibling.value);
+
+    if (typeof eventTypeByValue === `undefined`) {
+      return;
+    }
+
+    this.updateData({
+      eventType: eventTypeByValue
+    });
+  }
+
+
+  _optionsSelectHandler(evt) {
+    // evt.preventDefault();
+
+    // Так как обработчик мы привязали делегированием ко всей секции,
+    //   сюда может прийти и label, и span, и div. Для span нужно взять родителя
+    let clickTarget;
+    if (evt.target.tagName === `LABEL`) {
+      clickTarget = evt.target;
+    } else if (evt.target.parentElement.tagName === `LABEL`) {
+      clickTarget = evt.target.parentElement;
+    } else {
+      return;
+    }
+
+    const {eventType} = this._data;
+    const {eventOffers} = eventType;
+
+    const newEventOffers = eventOffers.map(({offer, price, isSelected}) => {
+      return {
+        offer,
+        price,
+        isSelected: `event-offer-` + offer.value === clickTarget.control.name
+          ? !clickTarget.control.checked
+          : isSelected
+      };
+    });
+
+    const newEventType = Object.assign(
+        {},
+        eventType,
+        {eventOffers: newEventOffers}
+    );
+
+    this.updateData({
+      eventType: newEventType
+    }, true);
+  }
+
+
+  _destinationChangeHandler(evt) {
+    evt.preventDefault();
+
+    this.updateData({
+      destination: generateDestination(evt.target.value)
+    });
+  }
+
+
+  _startTimeChangeHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      startMoment: moment(evt.target.value, `YY/MM/DD HH:mm`)
+    }, true);
+  }
+
+
+  _endTimeChangeHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      endMoment: moment(evt.target.value, `YY/MM/DD HH:mm`)
+    }, true);
+  }
+
+
+  _priceChangeHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      price: evt.target.value
+    }, true);
+  }
+
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
     // 3. А внутри абстрактного обработчика вызовем колбэк
-    this._callback.formSubmit();
+    this._callback.formSubmit(EditFormView.parseDataToTask(this._data));
   }
+
+
+  _favoriteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.favoriteClick();
+  }
+
+
+  _cancelEditClickHandler(evt) {
+    evt.preventDefault();
+    // 3. А внутри абстрактного обработчика вызовем колбэк
+    this._callback.cancelEditClick();
+  }
+
 
   setFormSubmitHandler(callback) {
     // Мы могли бы сразу передать callback в addEventListener,
@@ -257,4 +438,44 @@ export default class EditFormView extends AbstractView {
     this.getElement().querySelector(`form`).addEventListener(`submit`, this._formSubmitHandler);
   }
 
+
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+    this.getElement().querySelector(`.event__favorite-btn`).addEventListener(`click`, this._favoriteClickHandler);
+  }
+
+
+  setCancelEditClickHandler(callback) {
+    // Мы могли бы сразу передать callback в addEventListener,
+    // но тогда бы для удаления обработчика в будущем,
+    // нам нужно было бы производить это снаружи, где-то там,
+    // где мы вызывали setClickHandler, что не всегда удобно
+
+    // 1. Поэтому колбэк мы запишем во внутреннее свойство
+    this._callback.cancelEditClick = callback;
+    // 2. В addEventListener передадим абстрактный обработчик
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._cancelEditClickHandler);
+  }
+
+
+  static parseTaskToData(tripEvent) {
+    // Пока нам это не нужно, но вдруг Избранное не будет атрибутом точки маршрута? Пока пусть будет.
+    return Object.assign(
+        {},
+        tripEvent // ,
+        // {
+        //   isFavorite: tripEvent.isFavorite !== null
+        // }
+    );
+  }
+
+
+  static parseDataToTask(data) {
+    data = Object.assign({}, data);
+
+    // Пока нам это не нужно, но вдруг Избранное не будет атрибутом точки маршрута? Пока пусть будет.
+    // delete data.isFavorite;
+
+    return data;
+  }
 }

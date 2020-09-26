@@ -5,10 +5,10 @@ import TripContainerView from "../view/trip-container.js";
 import DayView from "../view/day.js";
 import DayEventsContainerView from "../view/day-events-container.js";
 
-import EventView from "../view/event.js";
-import EditFormView from "../view/edit-form.js";
+import EventPresenter from "./event.js";
+import {updateItem} from "../utils/common.js";
 
-import {render, RenderPosition, replace} from "../utils/render.js";
+import {render, RenderPosition} from "../utils/render.js";
 import {
   veryOldMoment,
   SortType,
@@ -28,12 +28,14 @@ export default class TripPresenter {
     this._mainContainerElement = document.querySelector(`.trip-events`);
     this._currentSortType = SortType.EVENT;
     this._currentSortDirection = SortDirection.ASCENDING;
-
+    this._eventPresentersList = {};
 
     this._sortComponent = null; // Будем пересоздавать его при рендеринге, а тут застолбим свойство класса
     this._tripContainerComponent = new TripContainerView();
     this._noEventsComponent = new NoEventView();
 
+    this._handleEventChange = this._handleEventChange.bind(this);
+    this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
@@ -42,6 +44,19 @@ export default class TripPresenter {
     this._tripEvents = tripEvents.slice();
 
     this._renderTrip();
+  }
+
+
+  _handleModeChange() {
+    Object
+      .values(this._eventPresentersList)
+      .forEach((presenter) => presenter.resetView());
+  }
+
+
+  _handleEventChange(updatedEvent) {
+    this._tripEvents = updateItem(this._tripEvents, updatedEvent);
+    this._eventPresentersList[updatedEvent.id].init(updatedEvent);
   }
 
 
@@ -80,6 +95,7 @@ export default class TripPresenter {
   _handleSortTypeChange(sortType) {
     this._sortEvents(sortType);
 
+    this._clearTaskList();
     this._sortComponent.removeElement();
     this._tripContainerComponent.removeElement();
 
@@ -90,6 +106,14 @@ export default class TripPresenter {
     } else {
       this._renderTripContainerSorted();
     }
+  }
+
+
+  _clearTaskList() {
+    Object
+      .values(this._eventPresentersList)
+      .forEach((presenter) => presenter.destroy());
+    this._eventPresentersList = {};
   }
 
 
@@ -106,37 +130,9 @@ export default class TripPresenter {
 
 
   _renderTripEvent(container, tripEvent) {
-    const eventComponent = new EventView(tripEvent);
-    const eventEditComponent = new EditFormView(tripEvent);
-
-    const replaceCardToForm = () => {
-      replace(eventEditComponent, eventComponent);
-    };
-
-    const replaceFormToCard = () => {
-      replace(eventComponent, eventEditComponent);
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        evt.preventDefault();
-        replaceFormToCard();
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    eventComponent.setEditClickHandler(() => {
-      replaceCardToForm();
-      document.addEventListener(`keydown`, onEscKeyDown);
-    });
-
-    eventEditComponent.setFormSubmitHandler(() => {
-      replaceFormToCard();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    });
-
-
-    render(container, eventComponent, RenderPosition.BEFOREEND);
+    const eventPresenter = new EventPresenter(container, this._handleEventChange, this._handleModeChange);
+    eventPresenter.init(tripEvent);
+    this._eventPresentersList[tripEvent.id] = eventPresenter;
   }
 
 
