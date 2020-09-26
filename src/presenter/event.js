@@ -19,6 +19,7 @@ export default class EventPresenter {
     this._handleCancelEditClick = this._handleCancelEditClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
@@ -37,6 +38,7 @@ export default class EventPresenter {
     this._eventEditComponent.setCancelEditClickHandler(this._handleCancelEditClick);
     this._eventEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
+    this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
       render(this._eventsContainer, this._eventComponent, RenderPosition.BEFOREEND);
@@ -119,12 +121,27 @@ export default class EventPresenter {
   }
 
 
-  _handleFormSubmit(tripEvent) {
+  _handleFormSubmit(updatedEvent) {
+    // Проверяем, поменялись ли в точке данные, которые попадают под фильтрацию,
+    // а значит требуют перерисовки списка - если таких нет, это PATCH-обновление
+    const isMinorUpdate = false;
+    //   !isDatesEqual(this._task.dueDate, updatedEvent.dueDate) ||
+    //   isTaskRepeating(this._task.repeating) !== isTaskRepeating(update.repeating);
+
     this._changeData(
         UserAction.UPDATE_EVENT,
+        isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+        updatedEvent
+    );
+    this._replaceFormToCard();
+  }
+
+
+  _handleDeleteClick(tripEvent) {
+    this._changeData(
+        UserAction.DELETE_EVENT,
         UpdateType.MINOR,
         tripEvent
     );
-    this._replaceFormToCard();
   }
 }

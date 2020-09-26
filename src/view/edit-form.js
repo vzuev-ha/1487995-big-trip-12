@@ -210,7 +210,7 @@ const createEditFormTemplate = (data) => {
               </div>
 
               <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-              <button class="event__reset-btn" type="reset">Cancel</button>
+              <button class="event__reset-btn" type="reset">Delete</button>
 
               <input id="event-favorite-1"
                      class="event__favorite-checkbox  visually-hidden"
@@ -248,6 +248,7 @@ export default class EditFormView extends SmartView {
     // Чтобы такого не происходило, нужно насильно
     // привязать обработчик к контексту с помощью bind
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
     this._startTimeChangeHandler = this._startTimeChangeHandler.bind(this);
     this._endTimeChangeHandler = this._endTimeChangeHandler.bind(this);
     this._priceChangeHandler = this._priceChangeHandler.bind(this);
@@ -262,6 +263,23 @@ export default class EditFormView extends SmartView {
     this._setInnerHandlers();
     this._setStartTimePicker();
     this._setEndTimePicker();
+  }
+
+
+  removeElement() {
+    // Перегружаем метод родителя removeElement,
+    // чтобы при удалении удалялись более не нужные календари
+    super.removeElement();
+
+    if (this._startTimePicker) {
+      this._startTimePicker.destroy();
+      this._startTimePicker = null;
+    }
+
+    if (this._endTimePicker) {
+      this._endTimePicker.destroy();
+      this._endTimePicker = null;
+    }
   }
 
 
@@ -283,6 +301,7 @@ export default class EditFormView extends SmartView {
     this._setEndTimePicker();
 
     this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setDeleteClickHandler(this._callback.deleteClick);
     this.setFavoriteClickHandler(this._callback.favoriteClick);
     this.setCancelEditClickHandler(this._callback.cancelEditClick);
   }
@@ -477,6 +496,18 @@ export default class EditFormView extends SmartView {
     this._callback.cancelEditClick = callback;
     // 2. В addEventListener передадим абстрактный обработчик
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._cancelEditClickHandler);
+  }
+
+
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(EditFormView.parseDataToTask(this._data));
+  }
+
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._formDeleteClickHandler);
   }
 
 

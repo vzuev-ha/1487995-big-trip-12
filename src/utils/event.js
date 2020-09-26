@@ -44,6 +44,15 @@ export const getTimeBetween = (startMoment, endMoment) => {
 };
 
 
+export const isDatesOfMomentsEqual = (momentA, momentB) => {
+  if (momentA === null && momentB === null) {
+    return true;
+  }
+
+  return momentA.isSame(momentB, `day`);
+};
+
+
 export const sortEventsByDefault = (eventA, eventB) => {
   return eventA.startMoment.diff(eventB.startMoment);
 };
