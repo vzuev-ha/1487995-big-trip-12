@@ -1,7 +1,7 @@
 import TripInfoView from "./view/trip-info.js";
 import SiteMenuView from "./view/site-menu.js";
-import FiltersView from "./view/filters.js";
 import TripPresenter from "./presenter/trip.js";
+import FilterPresenter from "./presenter/filter.js";
 import EventsModel from "./model/events.js";
 import FilterModel from "./model/filter.js";
 
@@ -20,13 +20,6 @@ eventsModel.setEvents(tripEventsArray);
 
 const filterModel = new FilterModel();
 
-// const filters = [
-//   {
-//     type: `everything`,
-//     name: `EVERYTHING`
-//   }
-// ];
-
 
 const headerTripInfoElement = document.querySelector(`.trip-main`);
 const headerTripControls = headerTripInfoElement
@@ -40,9 +33,10 @@ render(headerTripInfoElement, new TripInfoView(tripEventsArray), RenderPosition.
 // Меню
 render(headerTripControls[0], new SiteMenuView(), RenderPosition.AFTEREND);
 // Фильтры
-render(headerTripControls[1], new FiltersView(`everything`), RenderPosition.AFTEREND);
+const filterPresenter = new FilterPresenter(headerTripControls[1], filterModel, eventsModel);
 
 // Основной контейнер с точками маршрута
 const tripPresenter = new TripPresenter(eventsModel);
 
+filterPresenter.init();
 tripPresenter.init();
