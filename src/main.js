@@ -3,6 +3,7 @@ import SiteMenuView from "./view/site-menu.js";
 import FiltersView from "./view/filters.js";
 import TripPresenter from "./presenter/trip.js";
 import EventsModel from "./model/events.js";
+import FilterModel from "./model/filter.js";
 
 import {generateEvent} from "./mock/event.js";
 import {render} from "./utils/render.js";
@@ -16,6 +17,8 @@ const tripEventsArray = new Array(EVENT_COUNT).fill(undefined).map(generateEvent
 
 const eventsModel = new EventsModel();
 eventsModel.setEvents(tripEventsArray);
+
+const filterModel = new FilterModel();
 
 
 const headerTripInfoElement = document.querySelector(`.trip-main`);
