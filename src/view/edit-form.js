@@ -306,51 +306,88 @@ export default class EditFormView extends SmartView {
 
 
   _setStartTimePicker() {
-    if (this._startTimePicker) {
-      // В случае обновления компонента удаляем вспомогательные DOM-элементы,
-      // которые создает flatpickr при инициализации
-      this._startTimePicker.destroy();
-      this._startTimePicker = null;
-    }
-    if (this._data.startMoment) {
-      // flatpickr есть смысл инициализировать только в случае,
-      // если поле выбора даты доступно для заполнения
-      this._startTimePicker = flatpickr(
-        this.getElement().querySelector(`#event-start-time-1`),
-        {
-          enableTime: true,
-          time_24hr: true,
-          dateFormat: `y/m/d H:i`,
-          defaultDate: this._data.startMoment.toDate(),
-          onChange: this._startTimeChangeHandler // На событие flatpickr передаём наш колбэк
-        }
-      );
-    }
+    this._setTimePicker(this._startTimePicker, this._data.startMoment,
+      `#event-start-time-1`, this._startTimeChangeHandler);
   }
 
 
   _setEndTimePicker() {
-    if (this._endTimePicker) {
+    this._setTimePicker(this._endTimePicker, this._data.endMoment,
+      `#event-end-time-1`, this._endTimeChangeHandler);
+  }
+
+
+  _setTimePicker(timePicker, dataMoment, placeSelector, changeHandler) {
+    if (timePicker) {
       // В случае обновления компонента удаляем вспомогательные DOM-элементы,
       // которые создает flatpickr при инициализации
-      this._endTimePicker.destroy();
-      this._endTimePicker = null;
+      timePicker.destroy();
+      timePicker = null;
     }
-    if (this._data.endMoment) {
+
+    if (dataMoment) {
       // flatpickr есть смысл инициализировать только в случае,
       // если поле выбора даты доступно для заполнения
-      this._endTimePicker = flatpickr(
-        this.getElement().querySelector(`#event-end-time-1`),
+      timePicker = flatpickr(
+        this.getElement().querySelector(placeSelector),
         {
           enableTime: true,
           time_24hr: true,
           dateFormat: `y/m/d H:i`,
-          defaultDate: this._data.endMoment.toDate(),
-          onChange: this._endTimeChangeHandler // На событие flatpickr передаём наш колбэк
+          defaultDate: dataMoment.toDate(),
+          onChange: changeHandler // На событие flatpickr передаём наш колбэк
         }
       );
     }
   }
+
+
+  // _setStartTimePicker() {
+  //   if (this._startTimePicker) {
+  //     // В случае обновления компонента удаляем вспомогательные DOM-элементы,
+  //     // которые создает flatpickr при инициализации
+  //     this._startTimePicker.destroy();
+  //     this._startTimePicker = null;
+  //   }
+  //   if (this._data.startMoment) {
+  //     // flatpickr есть смысл инициализировать только в случае,
+  //     // если поле выбора даты доступно для заполнения
+  //     this._startTimePicker = flatpickr(
+  //       this.getElement().querySelector(`#event-start-time-1`),
+  //       {
+  //         enableTime: true,
+  //         time_24hr: true,
+  //         dateFormat: `y/m/d H:i`,
+  //         defaultDate: this._data.startMoment.toDate(),
+  //         onChange: this._startTimeChangeHandler // На событие flatpickr передаём наш колбэк
+  //       }
+  //     );
+  //   }
+  // }
+  //
+  //
+  // _setEndTimePicker() {
+  //   if (this._endTimePicker) {
+  //     // В случае обновления компонента удаляем вспомогательные DOM-элементы,
+  //     // которые создает flatpickr при инициализации
+  //     this._endTimePicker.destroy();
+  //     this._endTimePicker = null;
+  //   }
+  //   if (this._data.endMoment) {
+  //     // flatpickr есть смысл инициализировать только в случае,
+  //     // если поле выбора даты доступно для заполнения
+  //     this._endTimePicker = flatpickr(
+  //       this.getElement().querySelector(`#event-end-time-1`),
+  //       {
+  //         enableTime: true,
+  //         time_24hr: true,
+  //         dateFormat: `y/m/d H:i`,
+  //         defaultDate: this._data.endMoment.toDate(),
+  //         onChange: this._endTimeChangeHandler // На событие flatpickr передаём наш колбэк
+  //       }
+  //     );
+  //   }
+  // }
 
 
   _setInnerHandlers() {
