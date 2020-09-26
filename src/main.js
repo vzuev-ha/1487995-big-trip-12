@@ -34,4 +34,4 @@ render(headerTripControls[1], new FiltersView(), RenderPosition.AFTEREND);
 // Основной контейнер с точками маршрута
 const tripPresenter = new TripPresenter(eventsModel);
 
-tripPresenter.init(tripEventsArray);
+tripPresenter.init();

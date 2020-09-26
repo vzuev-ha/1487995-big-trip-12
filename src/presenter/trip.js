@@ -6,7 +6,6 @@ import DayView from "../view/day.js";
 import DayEventsContainerView from "../view/day-events-container.js";
 
 import EventPresenter from "./event.js";
-import {updateItem} from "../utils/common.js";
 
 import {render, RenderPosition} from "../utils/render.js";
 import {
@@ -26,6 +25,7 @@ export default class TripPresenter {
 
     // Найдем основной контейнер
     this._mainContainerElement = document.querySelector(`.trip-events`);
+    this._prevSortType = SortType.EVENT;
     this._currentSortType = SortType.EVENT;
     this._currentSortDirection = SortDirection.ASCENDING;
     this._eventPresentersList = {};
@@ -40,15 +40,21 @@ export default class TripPresenter {
   }
 
 
-  init(tripEvents) {
-    this._tripEvents = tripEvents.slice();
-
+  init() {
     this._renderTrip();
   }
 
 
   _getEvents() {
-    return this._eventsModel.getEvents();
+    switch (this._currentSortType) {
+      case SortType.TIME:
+        return this._eventsModel.getEvents().slice().sort(sortEventsByTime(this._currentSortDirection));
+      case SortType.PRICE:
+        return this._eventsModel.getEvents().slice().sort(sortEventsByPrice(this._currentSortDirection));
+    }
+
+    // case SortType.EVENT:
+    return this._eventsModel.getEvents().slice().sort(sortEventsByDefault);
   }
 
 
@@ -60,43 +66,28 @@ export default class TripPresenter {
 
 
   _handleEventChange(updatedEvent) {
-    this._tripEvents = updateItem(this._tripEvents, updatedEvent);
+    // Здесь будем вызывать обновление модели
     this._eventPresentersList[updatedEvent.id].init(updatedEvent);
   }
 
 
-  _toggleSortTypeAndDirection(sortType) {
-    if (this._currentSortType === sortType && this._currentSortDirection === SortDirection.ASCENDING) {
+  _toggleSortDirection() {
+    if (this._currentSortType === this._prevSortType && this._currentSortDirection === SortDirection.ASCENDING) {
       this._currentSortDirection = SortDirection.DESCENDING;
     } else {
       // Здесь же отработает условие первого клика по новой сортировке:
       //   if (this._currentSortType !== sortType)
       this._currentSortDirection = SortDirection.ASCENDING;
     }
-  }
 
-
-  _sortEvents(sortType) {
-    this._toggleSortTypeAndDirection(sortType);
-
-    switch (sortType) {
-      case SortType.EVENT:
-        this._tripEvents.sort(sortEventsByDefault);
-        break;
-      case SortType.TIME:
-        this._tripEvents.sort(sortEventsByTime(this._currentSortDirection));
-        break;
-      case SortType.PRICE:
-        this._tripEvents.sort(sortEventsByPrice(this._currentSortDirection));
-        break;
-    }
-
-    this._currentSortType = sortType;
+    this._prevSortType = this._currentSortType;
   }
 
 
   _handleSortTypeChange(sortType) {
-    this._sortEvents(sortType);
+    // this._sortEvents(sortType);
+    this._currentSortType = sortType;
+    this._toggleSortDirection();
 
     this._clearEventPresentersList();
     this._sortComponent.getElement().remove();
@@ -148,6 +139,7 @@ export default class TripPresenter {
     // Но мы оставим строчку на память, чтобы не путаться потом при анализе кода, куда делись .trip-days
     // const tripContainerElement = this._mainContainerElement.querySelector(`.trip-days`);
 
+    const tripEvents = this._getEvents();
 
     // Наполняем событиями
     let dayIndex = 1;
@@ -156,8 +148,8 @@ export default class TripPresenter {
     let dayEventsContainerElement = null;
 
     // Перебираем точки маршрута, группируя их по дням
-    for (let i = 0; i < this._tripEvents.length; i++) {
-      const {startMoment} = this._tripEvents[i];
+    for (let i = 0; i < tripEvents.length; i++) {
+      const {startMoment} = tripEvents[i];
       const currentMoment = moment(startMoment);
 
       // Вставляем блок очередного дня
@@ -177,7 +169,7 @@ export default class TripPresenter {
       }
 
       // Вставляем точку маршрута
-      this._renderTripEvent(dayEventsContainerElement, this._tripEvents[i]);
+      this._renderTripEvent(dayEventsContainerElement, tripEvents[i]);
     }
   }
 
@@ -197,14 +189,14 @@ export default class TripPresenter {
     const dayEventsContainerElement = dayElement.querySelector(`.trip-events__list`);
 
     // Перебираем точки маршрута, складывая в один контейнер дня
-    this._tripEvents.forEach((tripEvent) =>
+    this._getEvents().forEach((tripEvent) =>
       this._renderTripEvent(dayEventsContainerElement, tripEvent)
     );
   }
 
 
   _renderTrip() {
-    if (this._tripEvents.length === 0) {
+    if (this._getEvents().length === 0) {
       this._renderNoEvents();
       return;
     }
