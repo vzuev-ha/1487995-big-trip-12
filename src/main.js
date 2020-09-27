@@ -1,5 +1,6 @@
 import TripInfoView from "./view/trip-info.js";
 import SiteMenuView from "./view/site-menu.js";
+import NewEventButtonView from "./view/new-event-button.js";
 import TripPresenter from "./presenter/trip.js";
 import FilterPresenter from "./presenter/filter.js";
 import EventsModel from "./model/events.js";
@@ -21,19 +22,21 @@ eventsModel.setEvents(tripEventsArray);
 const filterModel = new FilterModel();
 
 
-const headerTripInfoElement = document.querySelector(`.trip-main`);
-const headerTripControls = headerTripInfoElement
+const headerTripHeaderElement = document.querySelector(`.trip-main`);
+const headerTripControls = headerTripHeaderElement
   .querySelector(`.trip-main__trip-controls`)
   .querySelectorAll(`h2`);
 
 
 // Информация о маршруте
-render(headerTripInfoElement, new TripInfoView(tripEventsArray), RenderPosition.AFTERBEGIN);
+render(headerTripHeaderElement, new TripInfoView(tripEventsArray), RenderPosition.AFTERBEGIN);
 
 // Меню
 render(headerTripControls[0], new SiteMenuView(), RenderPosition.AFTEREND);
 // Фильтры
 const filterPresenter = new FilterPresenter(headerTripControls[1], filterModel, eventsModel);
+// Кнопка добавления новой точки
+render(headerTripHeaderElement, new NewEventButtonView(), RenderPosition.BEFOREEND);
 
 // Основной контейнер с точками маршрута
 const tripPresenter = new TripPresenter(eventsModel, filterModel);
