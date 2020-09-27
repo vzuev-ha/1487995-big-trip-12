@@ -1,5 +1,6 @@
 import TripInfoView from "./view/trip-info.js";
 import SiteMenuView from "./view/site-menu.js";
+import StatisticsView from "./view/statistics.js";
 import NewEventButtonView from "./view/new-event-button.js";
 import TripPresenter from "./presenter/trip.js";
 import FilterPresenter from "./presenter/filter.js";
@@ -89,4 +90,8 @@ newEventButtonComponent.setNewEventButtonClickHandler(handleNewEventButtonClick)
 
 
 filterPresenter.init();
-tripPresenter.init();
+// Для удобства отладки скроем доску
+// tripPresenter.init();
+// и отобразим сразу статистику
+render(document.querySelector(`.page-body__page-main`)
+  .querySelector(`.page-body__container`), new StatisticsView(eventsModel.getEvents()), RenderPosition.BEFOREEND);
