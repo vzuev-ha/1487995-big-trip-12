@@ -1,12 +1,8 @@
 import EventView from "../view/event.js";
-import EditFormView from "../view/edit-form.js";
+import EditFormView from "../view/event-edit.js";
+import {WorkMode, RenderPosition, UserAction, UpdateType} from "../const.js";
 
-import {render, RenderPosition, replace, remove} from "../utils/render.js";
-
-const Mode = {
-  DEFAULT: `DEFAULT`,
-  EDITING: `EDITING`
-};
+import {render, replace, remove} from "../utils/render.js";
 
 
 export default class EventPresenter {
@@ -17,12 +13,13 @@ export default class EventPresenter {
 
     this._eventComponent = null;
     this._eventEditComponent = null;
-    this._mode = Mode.DEFAULT;
+    this._mode = WorkMode.DEFAULT;
 
     this._handleEditClick = this._handleEditClick.bind(this);
     this._handleCancelEditClick = this._handleCancelEditClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
@@ -41,17 +38,18 @@ export default class EventPresenter {
     this._eventEditComponent.setCancelEditClickHandler(this._handleCancelEditClick);
     this._eventEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
+    this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
       render(this._eventsContainer, this._eventComponent, RenderPosition.BEFOREEND);
       return;
     }
 
-    if (this._mode === Mode.DEFAULT) {
+    if (this._mode === WorkMode.DEFAULT) {
       replace(this._eventComponent, prevEventComponent);
     }
 
-    if (this._mode === Mode.EDITING) {
+    if (this._mode === WorkMode.EDITING) {
       replace(this._eventEditComponent, prevEventEditComponent);
     }
 
@@ -67,7 +65,7 @@ export default class EventPresenter {
 
 
   resetView() {
-    if (this._mode !== Mode.DEFAULT) {
+    if (this._mode !== WorkMode.DEFAULT) {
       this._replaceFormToCard();
     }
   }
@@ -77,14 +75,14 @@ export default class EventPresenter {
     replace(this._eventEditComponent, this._eventComponent);
     document.addEventListener(`keydown`, this._escKeyDownHandler);
     this._changeMode();
-    this._mode = Mode.EDITING;
+    this._mode = WorkMode.EDITING;
   }
 
 
   _replaceFormToCard() {
     replace(this._eventComponent, this._eventEditComponent);
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
-    this._mode = Mode.DEFAULT;
+    this._mode = WorkMode.DEFAULT;
   }
 
 
@@ -110,6 +108,8 @@ export default class EventPresenter {
 
   _handleFavoriteClick() {
     this._changeData(
+        UserAction.UPDATE_EVENT,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._tripEvent,
@@ -121,8 +121,27 @@ export default class EventPresenter {
   }
 
 
-  _handleFormSubmit(tripEvent) {
-    this._changeData(tripEvent);
+  _handleFormSubmit(updatedEvent) {
+    // Проверяем, поменялись ли в точке данные, которые попадают под фильтрацию,
+    // а значит требуют перерисовки списка - если таких нет, это PATCH-обновление
+    const isMinorUpdate = false;
+    //   !isDatesEqual(this._task.dueDate, updatedEvent.dueDate) ||
+    //   isTaskRepeating(this._task.repeating) !== isTaskRepeating(update.repeating);
+
+    this._changeData(
+        UserAction.UPDATE_EVENT,
+        isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+        updatedEvent
+    );
     this._replaceFormToCard();
+  }
+
+
+  _handleDeleteClick(tripEvent) {
+    this._changeData(
+        UserAction.DELETE_EVENT,
+        UpdateType.MINOR,
+        tripEvent
+    );
   }
 }

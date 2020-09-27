@@ -1,18 +1,5 @@
 import moment from 'moment';
-
-
-export const veryOldMoment = moment(`19800101`, `YYYYMMDD`);
-
-export const SortType = {
-  EVENT: `event`,
-  TIME: `time`,
-  PRICE: `price`
-};
-
-export const SortDirection = {
-  ASCENDING: `ascending`,
-  DESCENDING: `descending`
-};
+import {SortDirection} from "../const.js";
 
 
 export const getMomentTimeAsString = (inputMoment) => {
@@ -57,28 +44,44 @@ export const getTimeBetween = (startMoment, endMoment) => {
 };
 
 
+export const isDatesOfMomentsEqual = (momentA, momentB) => {
+  if (momentA === null && momentB === null) {
+    return true;
+  }
+
+  return momentA.isSame(momentB, `day`);
+};
+
+
+export const isMomentInTheFuture = (momentA) => {
+  return momentA.isAfter(moment());
+};
+
+
+export const isMomentInThePast = (momentA) => {
+  return momentA.isBefore(moment());
+};
+
+
 export const sortEventsByDefault = (eventA, eventB) => {
   return eventA.startMoment.diff(eventB.startMoment);
 };
 
-export const sortEventsByTimeAsc = (eventA, eventB) => {
+export const sortEventsByTime = (sortDirection) => (eventA, eventB) => {
   const a = moment(eventA.endMoment).diff(eventA.startMoment);
   const b = moment(eventB.endMoment).diff(eventB.startMoment);
 
-  return a - b;
-};
-
-export const sortEventsByTimeDesc = (eventA, eventB) => {
-  const a = moment(eventA.endMoment).diff(eventA.startMoment);
-  const b = moment(eventB.endMoment).diff(eventB.startMoment);
+  if (sortDirection === SortDirection.ASCENDING) {
+    return a - b;
+  }
 
   return b - a;
 };
 
-export const sortEventsByPriceAsc = (eventA, eventB) => {
-  return eventA.price - eventB.price;
-};
+export const sortEventsByPrice = (sortDirection) => (eventA, eventB) => {
+  if (sortDirection === SortDirection.ASCENDING) {
+    return eventA.price - eventB.price;
+  }
 
-export const sortEventsByPriceDesc = (eventA, eventB) => {
   return eventB.price - eventA.price;
 };

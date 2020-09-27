@@ -1,29 +1,12 @@
 import {getMomentSlashedFormat} from "../utils/event.js";
 import {getEventTypeByValue, generateDestination} from "../mock/event.js";
+import {BLANK_EVENT} from "../const.js";
+
 import SmartView from "./smart.js";
 import moment from 'moment';
 
 import flatpickr from "flatpickr";
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
-
-
-const BLANK_EVENT = {
-  eventType: {
-    name: `Flignt`,
-    value: `flight`,
-    preposition: `to`,
-    eventOffers: []
-  },
-  destination: {
-    name: ``,
-    description: ``,
-    photos: []
-  },
-  startMoment: moment(),
-  endMoment: moment(),
-  price: ``,
-  isFavorite: false
-};
 
 
 const createEditFormTemplate = (data) => {
@@ -197,13 +180,13 @@ const createEditFormTemplate = (data) => {
                 <label class="event__label  event__type-output" for="event-destination-1">
                   ${eventName} ${eventPreposition}
                 </label>
-                <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationName}" list="destination-list-1">
-                <datalist id="destination-list-1">
-                  <option value="Amsterdam"></option>
-                  <option value="Geneva"></option>
-                  <option value="Chamonix"></option>
-                  <option value="Saint Petersburg"></option>
-                </datalist>
+
+                <select class="event__input  event__input--destination" id="event-destination-1" name="event-destination">
+                  <option name="Amsterdam" ${destinationName === `Amsterdam` ? `selected` : ``}>Amsterdam</option>
+                  <option name="Geneva" ${destinationName === `Geneva` ? `selected` : ``}>Geneva</option>
+                  <option name="Chamonix" ${destinationName === `Chamonix` ? `selected` : ``}>Chamonix</option>
+                  <option name="Saint Petersburg" ${destinationName === `Saint Petersburg` ? `selected` : ``}>Saint Petersburg</option>
+                </select>
               </div>
 
               <div class="event__field-group  event__field-group--time">
@@ -223,11 +206,11 @@ const createEditFormTemplate = (data) => {
                   <span class="visually-hidden">Price</span>
                   &euro;
                 </label>
-                <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+                <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${price}">
               </div>
 
               <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-              <button class="event__reset-btn" type="reset">Cancel</button>
+              <button class="event__reset-btn" type="reset">Delete</button>
 
               <input id="event-favorite-1"
                      class="event__favorite-checkbox  visually-hidden"
@@ -265,6 +248,7 @@ export default class EditFormView extends SmartView {
     // Чтобы такого не происходило, нужно насильно
     // привязать обработчик к контексту с помощью bind
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
     this._startTimeChangeHandler = this._startTimeChangeHandler.bind(this);
     this._endTimeChangeHandler = this._endTimeChangeHandler.bind(this);
     this._priceChangeHandler = this._priceChangeHandler.bind(this);
@@ -279,6 +263,23 @@ export default class EditFormView extends SmartView {
     this._setInnerHandlers();
     this._setStartTimePicker();
     this._setEndTimePicker();
+  }
+
+
+  removeElement() {
+    // Перегружаем метод родителя removeElement,
+    // чтобы при удалении удалялись более не нужные календари
+    super.removeElement();
+
+    if (this._startTimePicker) {
+      this._startTimePicker.destroy();
+      this._startTimePicker = null;
+    }
+
+    if (this._endTimePicker) {
+      this._endTimePicker.destroy();
+      this._endTimePicker = null;
+    }
   }
 
 
@@ -300,54 +301,44 @@ export default class EditFormView extends SmartView {
     this._setEndTimePicker();
 
     this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setDeleteClickHandler(this._callback.deleteClick);
     this.setFavoriteClickHandler(this._callback.favoriteClick);
     this.setCancelEditClickHandler(this._callback.cancelEditClick);
   }
 
 
   _setStartTimePicker() {
-    if (this._startTimePicker) {
-      // В случае обновления компонента удаляем вспомогательные DOM-элементы,
-      // которые создает flatpickr при инициализации
-      this._startTimePicker.destroy();
-      this._startTimePicker = null;
-    }
-    if (this._data.startMoment) {
-      // flatpickr есть смысл инициализировать только в случае,
-      // если поле выбора даты доступно для заполнения
-      this._startTimePicker = flatpickr(
-        this.getElement().querySelector(`#event-start-time-1`),
-        {
-          enableTime: true,
-          time_24hr: true,
-          dateFormat: `y/m/d H:i`,
-          defaultDate: this._data.startMoment.toDate(),
-          onChange: this._startTimeChangeHandler // На событие flatpickr передаём наш колбэк
-        }
-      );
-    }
+    this._setTimePicker(this._startTimePicker, this._data.startMoment,
+        `#event-start-time-1`, this._startTimeChangeHandler);
   }
 
 
   _setEndTimePicker() {
-    if (this._endTimePicker) {
+    this._setTimePicker(this._endTimePicker, this._data.endMoment,
+        `#event-end-time-1`, this._endTimeChangeHandler);
+  }
+
+
+  _setTimePicker(timePicker, dataMoment, placeSelector, changeHandler) {
+    if (timePicker) {
       // В случае обновления компонента удаляем вспомогательные DOM-элементы,
       // которые создает flatpickr при инициализации
-      this._endTimePicker.destroy();
-      this._endTimePicker = null;
+      timePicker.destroy();
+      timePicker = null;
     }
-    if (this._data.endMoment) {
+
+    if (dataMoment) {
       // flatpickr есть смысл инициализировать только в случае,
       // если поле выбора даты доступно для заполнения
-      this._endTimePicker = flatpickr(
-        this.getElement().querySelector(`#event-end-time-1`),
-        {
-          enableTime: true,
-          time_24hr: true,
-          dateFormat: `y/m/d H:i`,
-          defaultDate: this._data.endMoment.toDate(),
-          onChange: this._endTimeChangeHandler // На событие flatpickr передаём наш колбэк
-        }
+      timePicker = flatpickr(
+          this.getElement().querySelector(placeSelector),
+          {
+            enableTime: true,
+            time_24hr: true, // eslint-disable-line camelcase
+            dateFormat: `y/m/d H:i`,
+            defaultDate: dataMoment.toDate(),
+            onChange: changeHandler // На событие flatpickr передаём наш колбэк
+          }
       );
     }
   }
@@ -505,6 +496,18 @@ export default class EditFormView extends SmartView {
     this._callback.cancelEditClick = callback;
     // 2. В addEventListener передадим абстрактный обработчик
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._cancelEditClickHandler);
+  }
+
+
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(EditFormView.parseDataToTask(this._data));
+  }
+
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._formDeleteClickHandler);
   }
 
 

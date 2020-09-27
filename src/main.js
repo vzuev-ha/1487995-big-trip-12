@@ -1,16 +1,24 @@
 import TripInfoView from "./view/trip-info.js";
 import SiteMenuView from "./view/site-menu.js";
-import FiltersView from "./view/filters.js";
 import TripPresenter from "./presenter/trip.js";
+import FilterPresenter from "./presenter/filter.js";
+import EventsModel from "./model/events.js";
+import FilterModel from "./model/filter.js";
 
 import {generateEvent} from "./mock/event.js";
-import {render, RenderPosition} from "./utils/render.js";
+import {render} from "./utils/render.js";
+import {RenderPosition} from "./const.js";
 
 
 const EVENT_COUNT = 20;
 
 const tripEventsArray = new Array(EVENT_COUNT).fill(undefined).map(generateEvent)
   .sort((a, b) => a.startMoment.diff(b.startMoment));
+
+const eventsModel = new EventsModel();
+eventsModel.setEvents(tripEventsArray);
+
+const filterModel = new FilterModel();
 
 
 const headerTripInfoElement = document.querySelector(`.trip-main`);
@@ -25,9 +33,16 @@ render(headerTripInfoElement, new TripInfoView(tripEventsArray), RenderPosition.
 // Меню
 render(headerTripControls[0], new SiteMenuView(), RenderPosition.AFTEREND);
 // Фильтры
-render(headerTripControls[1], new FiltersView(), RenderPosition.AFTEREND);
+const filterPresenter = new FilterPresenter(headerTripControls[1], filterModel, eventsModel);
 
 // Основной контейнер с точками маршрута
-const tripPresenter = new TripPresenter();
+const tripPresenter = new TripPresenter(eventsModel, filterModel);
 
-tripPresenter.init(tripEventsArray);
+filterPresenter.init();
+tripPresenter.init();
+
+
+document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
+  evt.preventDefault();
+  tripPresenter.createEvent();
+});
