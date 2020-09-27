@@ -8,7 +8,7 @@ import FilterModel from "./model/filter.js";
 
 import {generateEvent} from "./mock/event.js";
 import {render} from "./utils/render.js";
-import {RenderPosition, MenuItem} from "./const.js";
+import {RenderPosition, MenuItem, UpdateType, FilterType} from "./const.js";
 
 
 const EVENT_COUNT = 20;
@@ -36,6 +36,8 @@ render(headerTripHeaderElement, new TripInfoView(tripEventsArray), RenderPositio
 
 // Меню
 render(headerTripControls[0], siteMenuComponent, RenderPosition.AFTEREND);
+siteMenuComponent.setMenuItem(MenuItem.TABLE);
+
 // Фильтры
 const filterPresenter = new FilterPresenter(headerTripControls[1], filterModel, eventsModel);
 // Кнопка добавления новой точки
@@ -54,10 +56,14 @@ const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
     case MenuItem.TABLE:
       // Показать список точек
+      tripPresenter.init();
+
       // Скрыть статистику
       break;
     case MenuItem.STATS:
       // Скрыть список точек
+      tripPresenter.destroy();
+
       // Показать статистику
       break;
   }
@@ -66,10 +72,16 @@ siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
 
 const handleNewEventButtonClick = () => {
   // Скрыть статистику
-  // Показать доску
+
+  // Показать список точек
+  tripPresenter.destroy();
+  filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+  tripPresenter.init();
+
   // Показать форму добавления новой задачи
-  // Убрать выделение с ADD NEW TASK после сохранения
   tripPresenter.createEvent(handleEventNewFormClose);
+
+  // Убрать выделение с ADD NEW TASK после сохранения
   newEventButtonComponent.getElement().disabled = true;
   siteMenuComponent.setMenuItem(MenuItem.NONE);
 };

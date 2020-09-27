@@ -214,7 +214,9 @@ const createEditFormTemplate = (data, currentUserAction) => {
                 ${currentUserAction === UserAction.ADD_EVENT ? `Cancel` : `Delete`}
               </button>
 
-              <input id="event-favorite-1"
+    ${currentUserAction === UserAction.ADD_EVENT
+    ? ``
+    : `              <input id="event-favorite-1"
                      class="event__favorite-checkbox  visually-hidden"
                      type="checkbox"
                      name="event-favorite"
@@ -228,7 +230,8 @@ const createEditFormTemplate = (data, currentUserAction) => {
 
               <button class="event__rollup-btn" type="button">
                 <span class="visually-hidden">Open event</span>
-              </button>
+              </button>`}
+
             </header>
 
             ${detailsHTML}
