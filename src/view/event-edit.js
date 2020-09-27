@@ -180,14 +180,13 @@ const createEditFormTemplate = (data) => {
                 <label class="event__label  event__type-output" for="event-destination-1">
                   ${eventName} ${eventPreposition}
                 </label>
-                <input class="event__input  event__input--destination" id="event-destination-1" type="text"
-                       name="event-destination" value="${destinationName}" list="destination-list-1">
-                <datalist id="destination-list-1">
-                  <option value="Amsterdam"></option>
-                  <option value="Geneva"></option>
-                  <option value="Chamonix"></option>
-                  <option value="Saint Petersburg"></option>
-                </datalist>
+
+                <select class="event__input  event__input--destination" id="event-destination-1" name="event-destination">
+                  <option name="Amsterdam" ${destinationName === `Amsterdam` ? `selected` : ``}>Amsterdam</option>
+                  <option name="Geneva" ${destinationName === `Geneva` ? `selected` : ``}>Geneva</option>
+                  <option name="Chamonix" ${destinationName === `Chamonix` ? `selected` : ``}>Chamonix</option>
+                  <option name="Saint Petersburg" ${destinationName === `Saint Petersburg` ? `selected` : ``}>Saint Petersburg</option>
+                </select>
               </div>
 
               <div class="event__field-group  event__field-group--time">
@@ -207,7 +206,7 @@ const createEditFormTemplate = (data) => {
                   <span class="visually-hidden">Price</span>
                   &euro;
                 </label>
-                <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+                <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${price}">
               </div>
 
               <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
