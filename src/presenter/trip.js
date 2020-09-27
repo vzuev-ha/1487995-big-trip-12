@@ -6,6 +6,7 @@ import DayView from "../view/day.js";
 import DayEventsContainerView from "../view/day-events-container.js";
 
 import EventPresenter from "./event.js";
+import EventNewPresenter from "./event-new.js";
 import {filter} from "../utils/filter.js";
 
 import {remove, render} from "../utils/render.js";
@@ -16,6 +17,7 @@ import {
   SortType,
   SortDirection,
   RenderPosition,
+  FilterType,
   UpdateType,
   UserAction
 } from "../const.js";
@@ -50,11 +52,20 @@ export default class TripPresenter {
 
     this._eventsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
+
+    this._eventNewPresenter = new EventNewPresenter(this._mainContainerElement, this._handleViewAction);
   }
 
 
   init() {
     this._renderTrip();
+  }
+
+
+  createEvent() {
+    this._currentSortType = SortType.EVENT;
+    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this._eventNewPresenter.init();
   }
 
 
@@ -76,6 +87,8 @@ export default class TripPresenter {
 
 
   _handleModeChange() {
+    this._eventNewPresenter.destroy();
+
     Object
       .values(this._eventPresentersList)
       .forEach((presenter) => presenter.resetView());
@@ -148,6 +161,8 @@ export default class TripPresenter {
 
 
   _clearTrip({resetSortType = false} = {}) {
+    this._eventNewPresenter.destroy();
+
     Object
       .values(this._eventPresentersList)
       .forEach((presenter) => presenter.destroy());

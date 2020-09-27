@@ -1,5 +1,5 @@
 import EventView from "../view/event.js";
-import EditFormView from "../view/edit-form.js";
+import EditFormView from "../view/event-edit.js";
 import {WorkMode, RenderPosition, UserAction, UpdateType} from "../const.js";
 
 import {render, replace, remove} from "../utils/render.js";
