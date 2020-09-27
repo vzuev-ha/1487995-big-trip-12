@@ -4,9 +4,9 @@ import {MenuItem} from "../const.js";
 const createSiteMenuTemplate = () => {
   return `<nav class="trip-controls__trip-tabs  trip-tabs">
               <a class="trip-tabs__btn"
-                 id="menu-item-${MenuItem.TABLE.toLowerCase()}" href="#">Table</a>
+                 id="${MenuItem.TABLE_MENU_ITEM}" href="#">Table</a>
               <a class="trip-tabs__btn"
-                 id="menu-item-${MenuItem.STATS.toLowerCase()}" href="#">Stats</a>
+                 id="${MenuItem.STATS_MENU_ITEM}" href="#">Stats</a>
             </nav>`;
 };
 
@@ -26,7 +26,7 @@ export default class SiteMenuView extends AbstractView {
 
   _menuClickHandler(evt) {
     evt.preventDefault();
-    this._callback.menuClick(evt.target.value);
+    this._callback.menuClick(evt.target.id);
   }
 
 
@@ -40,11 +40,10 @@ export default class SiteMenuView extends AbstractView {
     if (newItem === null) {
       return;
     }
-
     const items = this.getElement().querySelectorAll(`.trip-tabs__btn`);
 
     items.forEach((item) => {
-      if (item.id === `menu-item-${newItem.toLowerCase()}`) {
+      if (item.id === newItem) {
         item.classList.add(`trip-tabs__btn--active`);
       } else {
         item.classList.remove(`trip-tabs__btn--active`);

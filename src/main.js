@@ -8,7 +8,7 @@ import EventsModel from "./model/events.js";
 import FilterModel from "./model/filter.js";
 
 import {generateEvent} from "./mock/event.js";
-import {render} from "./utils/render.js";
+import {render, remove} from "./utils/render.js";
 import {RenderPosition, MenuItem, UpdateType, FilterType} from "./const.js";
 
 
@@ -37,7 +37,7 @@ render(headerTripHeaderElement, new TripInfoView(tripEventsArray), RenderPositio
 
 // Меню
 render(headerTripControls[0], siteMenuComponent, RenderPosition.AFTEREND);
-siteMenuComponent.setMenuItem(MenuItem.TABLE);
+siteMenuComponent.setMenuItem(MenuItem.TABLE_MENU_ITEM);
 
 // Фильтры
 const filterPresenter = new FilterPresenter(headerTripControls[1], filterModel, eventsModel);
@@ -50,29 +50,40 @@ const tripPresenter = new TripPresenter(eventsModel, filterModel);
 
 const handleEventNewFormClose = () => {
   newEventButtonComponent.getElement().disabled = false;
-  siteMenuComponent.setMenuItem(MenuItem.TABLE);
+  siteMenuComponent.setMenuItem(MenuItem.TABLE_MENU_ITEM);
 };
+
+
+let statisticsComponent = null;
 
 const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
-    case MenuItem.TABLE:
+    case MenuItem.TABLE_MENU_ITEM:
       // Показать список точек
       tripPresenter.init();
+      siteMenuComponent.setMenuItem(MenuItem.TABLE_MENU_ITEM);
 
       // Скрыть статистику
+      remove(statisticsComponent);
       break;
-    case MenuItem.STATS:
+    case MenuItem.STATS_MENU_ITEM:
       // Скрыть список точек
       tripPresenter.destroy();
 
       // Показать статистику
+      statisticsComponent = new StatisticsView(eventsModel.getEvents());
+      render(document.querySelector(`.page-body__page-main`)
+        .querySelector(`.page-body__container`), statisticsComponent, RenderPosition.BEFOREEND);
+      siteMenuComponent.setMenuItem(MenuItem.STATS_MENU_ITEM);
       break;
   }
 };
 siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
 
+
 const handleNewEventButtonClick = () => {
   // Скрыть статистику
+  remove(statisticsComponent);
 
   // Показать список точек
   tripPresenter.destroy();
@@ -84,14 +95,10 @@ const handleNewEventButtonClick = () => {
 
   // Убрать выделение с ADD NEW TASK после сохранения
   newEventButtonComponent.getElement().disabled = true;
-  siteMenuComponent.setMenuItem(MenuItem.NONE);
+  siteMenuComponent.setMenuItem(MenuItem.NONE_MENU_ITEM);
 };
 newEventButtonComponent.setNewEventButtonClickHandler(handleNewEventButtonClick);
 
 
 filterPresenter.init();
-// Для удобства отладки скроем доску
-// tripPresenter.init();
-// и отобразим сразу статистику
-render(document.querySelector(`.page-body__page-main`)
-  .querySelector(`.page-body__container`), new StatisticsView(eventsModel.getEvents()), RenderPosition.BEFOREEND);
+tripPresenter.init();

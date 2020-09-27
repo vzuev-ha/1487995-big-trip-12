@@ -71,7 +71,7 @@ export const FilterType = {
 
 
 export const MenuItem = {
-  NONE: `None`,
-  TABLE: `Table`,
-  STATS: `Stats`
+  NONE_MENU_ITEM: `none-menu-item`,
+  TABLE_MENU_ITEM: `table-menu-item`,
+  STATS_MENU_ITEM: `stats-menu-item`
 };
