@@ -1,19 +1,27 @@
 import SmartView from "./smart.js";
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import {countPriceByEvents, countUseOfTransport, countTimeSpendByType} from "../utils/statistics.js";
 
 // Рассчитаем высоту канваса в зависимости от того, сколько данных в него будет передаваться
 const BAR_HEIGHT = 55;
 
 
-const renderMoneyChart = (moneyCtx) => {
+const renderMoneyChart = (tripEvents, moneyCtx) => {
   return new Chart(moneyCtx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
       labels: [`FLY`, `STAY`, `DRIVE`, `LOOK`, `EAT`, `RIDE`],
       datasets: [{
-        data: [400, 300, 200, 160, 150, 100],
+        data: [
+          countPriceByEvents(tripEvents, [`flight`]),
+          countPriceByEvents(tripEvents, [`check-in`]),
+          countPriceByEvents(tripEvents, [`drive`]),
+          countPriceByEvents(tripEvents, [`sightseeing`]),
+          countPriceByEvents(tripEvents, [`restaurant`]),
+          countPriceByEvents(tripEvents, [`taxi`, `bus`, `train`, `ship`, `transport`])
+        ],
         backgroundColor: `#ffffff`,
         hoverBackgroundColor: `#ffffff`,
         anchor: `start`
@@ -74,14 +82,19 @@ const renderMoneyChart = (moneyCtx) => {
 };
 
 
-const renderTransportChart = (transportCtx) => {
+const renderTransportChart = (tripEvents, transportCtx) => {
   return new Chart(transportCtx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
       labels: [`DRIVE`, `RIDE`, `FLY`, `SAIL`],
       datasets: [{
-        data: [4, 3, 2, 1],
+        data: [
+          countUseOfTransport(tripEvents, [`drive`]),
+          countUseOfTransport(tripEvents, [`taxi`, `bus`, `train`, `transport`]),
+          countUseOfTransport(tripEvents, [`flight`]),
+          countUseOfTransport(tripEvents, [`ship`])
+        ],
         backgroundColor: `#ffffff`,
         hoverBackgroundColor: `#ffffff`,
         anchor: `start`
@@ -142,14 +155,36 @@ const renderTransportChart = (transportCtx) => {
 };
 
 
-const renderTimeSpendChart = (timeSpendCtx) => {
+const renderTimeSpendChart = (tripEvents, timeSpendCtx) => {
   return new Chart(timeSpendCtx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: [`HOTEL`, `RIDE`, `FLY`, `SAIL`],
+      labels: [
+        `TAXI`,
+        `BUS`,
+        `TRAIN`,
+        `SHIP`,
+        `TRANSPORT`,
+        `DRIVE`,
+        `FLIGHT`,
+        `HOTEL`,
+        `LOOK`,
+        `EAT`
+      ],
       datasets: [{
-        data: [4, 3, 2, 1],
+        data: [
+          countTimeSpendByType(tripEvents, [`taxi`]),
+          countTimeSpendByType(tripEvents, [`bus`]),
+          countTimeSpendByType(tripEvents, [`train`]),
+          countTimeSpendByType(tripEvents, [`ship`]),
+          countTimeSpendByType(tripEvents, [`transport`]),
+          countTimeSpendByType(tripEvents, [`drive`]),
+          countTimeSpendByType(tripEvents, [`flight`]),
+          countTimeSpendByType(tripEvents, [`check-in`]),
+          countTimeSpendByType(tripEvents, [`sightseeing`]),
+          countTimeSpendByType(tripEvents, [`restaurant`])
+        ],
         backgroundColor: `#ffffff`,
         hoverBackgroundColor: `#ffffff`,
         anchor: `start`
@@ -228,11 +263,11 @@ const createStatisticsTemplate = () => {
         </section>`;
 };
 
-export default class Statistics extends SmartView {
+export default class StatisticsView extends SmartView {
   constructor(tripEvents) {
     super();
 
-    this._data = tripEvents;
+    this._tripEvents = tripEvents;
 
     this._moneyChart = null;
     this._transportChart = null;
@@ -250,7 +285,7 @@ export default class Statistics extends SmartView {
   }
 
   getTemplate() {
-    return createStatisticsTemplate(this._data);
+    return createStatisticsTemplate();
   }
 
   restoreHandlers() {
@@ -269,10 +304,10 @@ export default class Statistics extends SmartView {
     transportCtx.height = BAR_HEIGHT * 4;
 
     const timeSpendCtx = this.getElement().querySelector(`.statistics__chart--time`);
-    timeSpendCtx.height = BAR_HEIGHT * 4;
+    timeSpendCtx.height = BAR_HEIGHT * 10;
 
-    this._moneyChart = renderMoneyChart(moneyCtx);
-    this._transportChart = renderTransportChart(transportCtx);
-    this._timeSpendChart = renderTimeSpendChart(timeSpendCtx);
+    this._moneyChart = renderMoneyChart(this._tripEvents, moneyCtx);
+    this._transportChart = renderTransportChart(this._tripEvents, transportCtx);
+    this._timeSpendChart = renderTimeSpendChart(this._tripEvents, timeSpendCtx);
   }
 }
