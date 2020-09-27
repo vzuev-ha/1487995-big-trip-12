@@ -8,7 +8,7 @@ import FilterModel from "./model/filter.js";
 
 import {generateEvent} from "./mock/event.js";
 import {render} from "./utils/render.js";
-import {RenderPosition} from "./const.js";
+import {RenderPosition, MenuItem} from "./const.js";
 
 
 const EVENT_COUNT = 20;
@@ -27,19 +27,46 @@ const headerTripControls = headerTripHeaderElement
   .querySelector(`.trip-main__trip-controls`)
   .querySelectorAll(`h2`);
 
+const siteMenuComponent = new SiteMenuView();
+const newEventButtonComponent = new NewEventButtonView();
+
 
 // Информация о маршруте
 render(headerTripHeaderElement, new TripInfoView(tripEventsArray), RenderPosition.AFTERBEGIN);
 
 // Меню
-render(headerTripControls[0], new SiteMenuView(), RenderPosition.AFTEREND);
+render(headerTripControls[0], siteMenuComponent, RenderPosition.AFTEREND);
 // Фильтры
 const filterPresenter = new FilterPresenter(headerTripControls[1], filterModel, eventsModel);
 // Кнопка добавления новой точки
-render(headerTripHeaderElement, new NewEventButtonView(), RenderPosition.BEFOREEND);
+render(headerTripHeaderElement, newEventButtonComponent, RenderPosition.BEFOREEND);
 
 // Основной контейнер с точками маршрута
 const tripPresenter = new TripPresenter(eventsModel, filterModel);
+
+
+const handleSiteMenuClick = (menuItem) => {
+  switch (menuItem) {
+    case MenuItem.TABLE:
+      // Показать список точек
+      // Скрыть статистику
+      break;
+    case MenuItem.STATS:
+      // Скрыть список точек
+      // Показать статистику
+      break;
+  }
+};
+siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+
+const handleNewEventButtonClick = () => {
+  // Скрыть статистику
+  // Показать доску
+  // Показать форму добавления новой задачи
+  // Убрать выделение с ADD NEW TASK после сохранения
+};
+newEventButtonComponent.setNewEventButtonClickHandler(handleNewEventButtonClick);
+
 
 filterPresenter.init();
 tripPresenter.init();
