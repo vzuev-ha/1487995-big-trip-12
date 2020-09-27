@@ -45,6 +45,11 @@ render(headerTripHeaderElement, newEventButtonComponent, RenderPosition.BEFOREEN
 const tripPresenter = new TripPresenter(eventsModel, filterModel);
 
 
+const handleEventNewFormClose = () => {
+  newEventButtonComponent.getElement().disabled = false;
+  siteMenuComponent.setMenuItem(MenuItem.TABLE);
+};
+
 const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
     case MenuItem.TABLE:
@@ -64,15 +69,12 @@ const handleNewEventButtonClick = () => {
   // Показать доску
   // Показать форму добавления новой задачи
   // Убрать выделение с ADD NEW TASK после сохранения
+  tripPresenter.createEvent(handleEventNewFormClose);
+  newEventButtonComponent.getElement().disabled = true;
+  siteMenuComponent.setMenuItem(MenuItem.NONE);
 };
 newEventButtonComponent.setNewEventButtonClickHandler(handleNewEventButtonClick);
 
 
 filterPresenter.init();
 tripPresenter.init();
-
-
-document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
-  evt.preventDefault();
-  tripPresenter.createEvent();
-});

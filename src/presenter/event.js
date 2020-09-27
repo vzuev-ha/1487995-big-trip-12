@@ -31,7 +31,7 @@ export default class EventPresenter {
     const prevEventEditComponent = this._eventEditComponent;
 
     this._eventComponent = new EventView(tripEvent);
-    this._eventEditComponent = new EditFormView(tripEvent);
+    this._eventEditComponent = new EditFormView(tripEvent, UserAction.UPDATE_EVENT);
 
     this._eventComponent.setEditClickHandler(this._handleEditClick);
 

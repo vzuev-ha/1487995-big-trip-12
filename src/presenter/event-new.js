@@ -1,7 +1,7 @@
 import EventEditView from "../view/event-edit.js";
 import {generateId} from "../mock/event.js";
 import {remove, render} from "../utils/render.js";
-import {RenderPosition, UserAction, UpdateType} from "../const.js";
+import {BLANK_EVENT, RenderPosition, UserAction, UpdateType} from "../const.js";
 
 
 export default class EventNewPresenter {
@@ -10,6 +10,7 @@ export default class EventNewPresenter {
     this._changeData = changeData;
 
     this._eventEditComponent = null;
+    this._destroyCallback = null;
 
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
@@ -17,12 +18,14 @@ export default class EventNewPresenter {
   }
 
 
-  init() {
+  init(callback) {
+    this._destroyCallback = callback;
+
     if (this._eventEditComponent !== null) {
       return;
     }
 
-    this._eventEditComponent = new EventEditView();
+    this._eventEditComponent = new EventEditView(BLANK_EVENT, UserAction.ADD_EVENT);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
@@ -35,6 +38,10 @@ export default class EventNewPresenter {
   destroy() {
     if (this._eventEditComponent === null) {
       return;
+    }
+
+    if (this._destroyCallback !== null) {
+      this._destroyCallback();
     }
 
     remove(this._eventEditComponent);

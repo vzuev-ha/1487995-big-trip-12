@@ -62,10 +62,10 @@ export default class TripPresenter {
   }
 
 
-  createEvent() {
+  createEvent(callback) {
     this._currentSortType = SortType.EVENT;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this._eventNewPresenter.init();
+    this._eventNewPresenter.init(callback);
   }
 
 

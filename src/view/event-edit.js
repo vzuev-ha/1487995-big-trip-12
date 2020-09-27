@@ -1,6 +1,6 @@
 import {getMomentSlashedFormat} from "../utils/event.js";
 import {getEventTypeByValue, generateDestination} from "../mock/event.js";
-import {BLANK_EVENT} from "../const.js";
+import {BLANK_EVENT, UserAction} from "../const.js";
 
 import SmartView from "./smart.js";
 import moment from 'moment';
@@ -9,7 +9,7 @@ import flatpickr from "flatpickr";
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
 
-const createEditFormTemplate = (data) => {
+const createEditFormTemplate = (data, currentUserAction) => {
   const {eventType, destination, startMoment, endMoment, price, isFavorite} = data;
 
   const {
@@ -210,7 +210,9 @@ const createEditFormTemplate = (data) => {
               </div>
 
               <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-              <button class="event__reset-btn" type="reset">Delete</button>
+              <button class="event__reset-btn" type="reset">
+                ${currentUserAction === UserAction.ADD_EVENT ? `Cancel` : `Delete`}
+              </button>
 
               <input id="event-favorite-1"
                      class="event__favorite-checkbox  visually-hidden"
@@ -236,9 +238,10 @@ const createEditFormTemplate = (data) => {
 
 
 export default class EditFormView extends SmartView {
-  constructor(tripEvent = BLANK_EVENT) {
+  constructor(tripEvent = BLANK_EVENT, currentUserAction) {
     super();
     this._data = EditFormView.parseTaskToData(tripEvent);
+    this._currentUserAction = currentUserAction;
     this._startTimePicker = null;
     this._endTimePicker = null;
 
@@ -291,7 +294,7 @@ export default class EditFormView extends SmartView {
 
 
   getTemplate() {
-    return createEditFormTemplate(this._data);
+    return createEditFormTemplate(this._data, this._currentUserAction);
   }
 
 
