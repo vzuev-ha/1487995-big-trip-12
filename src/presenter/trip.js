@@ -17,7 +17,6 @@ import {
   SortType,
   SortDirection,
   RenderPosition,
-  FilterType,
   UpdateType,
   UserAction
 } from "../const.js";
@@ -50,22 +49,30 @@ export default class TripPresenter {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
-    this._eventsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
-
     this._eventNewPresenter = new EventNewPresenter(this._mainContainerElement, this._handleViewAction);
   }
 
 
   init() {
+    this._eventsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
+
     this._renderTrip();
   }
 
 
-  createEvent() {
-    this._currentSortType = SortType.EVENT;
-    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this._eventNewPresenter.init();
+  destroy() {
+    this._clearTrip({resetSortType: true});
+
+    remove(this._tripContainerComponent);
+
+    this._eventsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+  }
+
+
+  createEvent(callback) {
+    this._eventNewPresenter.init(callback);
   }
 
 
